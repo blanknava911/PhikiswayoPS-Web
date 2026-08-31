@@ -1,0 +1,6 @@
+{
+  "name": "Phikiswayo Primary School",
+  "description": "Official modern web portal for Phikiswayo Primary School in Ntuzuma, KwaZulu-Natal featuring admissions, school events, curriculum info, and contact directory.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
