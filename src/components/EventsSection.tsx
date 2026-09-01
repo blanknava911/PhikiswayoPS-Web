@@ -1,25 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
+  AlertCircle,
   Calendar, 
   MapPin, 
   Clock
 } from 'lucide-react';
+import { EventItem } from '../types';
+import { fetchLiveEvents } from '../utils/events';
 
 type EventCategory = 'all' | 'academic' | 'sports' | 'meetings';
 
-interface SchoolEvent {
-  id: string;
-  title: string;
-  category: 'academic' | 'sports' | 'meetings';
-  categoryLabel: string;
-  date: string;
-  time: string;
-  location: string;
-  description: string;
-  imageUrl: string;
-}
-
-const EVENTS_DATA: SchoolEvent[] = [
+const EVENTS_DATA: EventItem[] = [
   {
     id: '1',
     title: 'Term 3 Formal Assessments',
@@ -90,26 +81,57 @@ const EVENTS_DATA: SchoolEvent[] = [
 
 export const EventsSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<EventCategory>('all');
+  const [events, setEvents] = useState<EventItem[]>(EVENTS_DATA);
+  const [liveEventError, setLiveEventError] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetchLiveEvents()
+      .then((liveEvents) => {
+        if (isMounted && liveEvents !== null) {
+          setEvents(liveEvents);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setLiveEventError(true);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredEvents = activeCategory === 'all' 
-    ? EVENTS_DATA 
-    : EVENTS_DATA.filter(e => e.category === activeCategory);
+    ? events
+    : events.filter(e => e.category === activeCategory);
 
   return (
     <section className="py-20 bg-white" id="events-section">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12" id="events-header">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-red-50 text-[#ff2121] font-bold text-xs uppercase tracking-widest border border-red-200 mb-3">
-            Calendar & Highlights
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#ff2121] font-display">
-            School Events & Activities
-          </h2>
-          <p className="mt-3 text-neutral-600 text-sm sm:text-base">
-            Keep track of academic assessment weeks, sports fixtures, and parent meetings at Phikiswayo Primary.
-          </p>
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12" id="events-header">
+          <div className="text-center lg:text-left max-w-3xl">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-red-50 text-[#ff2121] font-bold text-xs uppercase tracking-widest border border-red-200 mb-3">
+              Calendar & Highlights
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#ff2121] font-display">
+              School Events & Activities
+            </h2>
+            <p className="mt-3 text-neutral-600 text-sm sm:text-base">
+              Keep track of academic assessment weeks, sports fixtures, and parent meetings at Phikiswayo Primary.
+            </p>
+          </div>
+
+          {liveEventError && (
+            <div className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800">
+              <AlertCircle className="w-4 h-4" />
+              <span>Showing saved events while live events are unavailable.</span>
+            </div>
+          )}
         </div>
 
         {/* Tabbed Category Filters */}

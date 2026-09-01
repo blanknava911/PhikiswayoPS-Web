@@ -43,7 +43,7 @@ This application provides parents, learners, educators, and community members wi
   3. *Submit in Person* at the school administration office.
 - **Interactive Document Checklist**: Dynamic checklist allowing parents to check off required documents with real-time feedback.
 - **Direct PDF Download**: Uses the official uploaded admission form PDF in `public/admission-form.pdf`.
-- **Digital Form Preview Modal**: Full-screen preview modal displaying the official PDF with quick print and download actions.
+- **Digital Form Preview Modal**: Full-screen image preview generated from the official PDF, with quick open and download actions. This avoids Chrome blocking embedded PDF previews.
 
 #### 5. **School Events & Calendar (`EventsSection.tsx`)**
 - **Category Filter Tabs**: Interactive filtering across **All Events**, **Academic**, **Sports & Athletics**, and **Parent Meetings**.
@@ -51,16 +51,22 @@ This application provides parents, learners, educators, and community members wi
 
 #### 6. **News & Notices (`NewsSection.tsx`)**
 - **Announcement Feed**: Dedicated parent-facing notices section for admissions updates, document reminders, and school office notices.
-- **Live Notices Ready**: Can read notices from `VITE_NOTICES_API_URL` once a secure admin backend or CMS is connected.
+- **Live Notices Ready**: Reads published notices from Supabase when the live admin database is connected, with saved notices as the fallback.
 
-#### 7. **Contact Directory & Community Channels (`ContactSection.tsx`)**
+#### 7. **Live Admin (`AdminSection.tsx`)**
+- **Secure Login**: Admin login is enabled for `blanknava205@gmail.com` after the user is created in Supabase Auth.
+- **Editable Notices**: Create, edit, publish, unpublish, pin, and delete school notices.
+- **Editable Events**: Create, edit, publish, unpublish, and delete school events that appear on the live website.
+- **Database Rules**: Supabase row-level security allows public visitors to read published content only, while write access is limited to the approved admin account.
+
+#### 8. **Contact Directory & Community Channels (`ContactSection.tsx`)**
 - **Interactive Contact Cards**:
   - **Physical Address**: *348 Khangela St, Ntuzuma A, 4360* with a one-click copy button.
   - **Telephone**: *081 509 1460* with instant call trigger and copy-to-clipboard functionality.
   - **Official Email**: *PHIKISWAYO-PS@kznschools.gov.za* with mailto trigger and copy button.
 - **Social Media Hub**: Prominent links to connect with the school on **Facebook** and **TikTok**, with WhatsApp ready to be added once the official number or link is supplied.
 
-#### 8. **Footer (`Footer.tsx`)**
+#### 9. **Footer (`Footer.tsx`)**
 - Complete site directory, direct PDF download trigger, physical location details, copyright notices, and a smooth scroll-to-top button.
 
 ---
@@ -74,6 +80,7 @@ This application provides parents, learners, educators, and community members wi
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **Iconography** | [Lucide React](https://lucide.dev/) |
 | **Admission Form** | Static official PDF served from `public/admission-form.pdf` |
+| **Live Admin** | Supabase Auth, database tables, and row-level security |
 | **Typography** | Plus Jakarta Sans (Body & UI) & Playfair Display (Headings & Crest) |
 
 ---
@@ -98,6 +105,7 @@ This application provides parents, learners, educators, and community members wi
 │   │   ├── AdmissionFormModal.tsx# Digital preview & print modal for application form
 │   │   ├── EventsSection.tsx    # School calendar & categorized events
 │   │   ├── NewsSection.tsx      # School news and notices
+│   │   ├── AdminSection.tsx     # Supabase-backed login and live content editor
 │   │   ├── ContactSection.tsx   # Contact directory & social media connections
 │   │   ├── Footer.tsx           # Site footer & quick links
 │   │   └── SchoolCrest.tsx      # Reusable official school logo image component
@@ -106,7 +114,11 @@ This application provides parents, learners, educators, and community members wi
 │   └── utils/
 │       ├── admissionForm.ts     # Admission form download/open helpers
 │       ├── assets.ts            # Deployment-safe static asset paths
-│       └── notices.ts           # Optional live notices loader
+│       ├── events.ts            # Optional live events loader
+│       ├── notices.ts           # Optional live notices loader
+│       └── supabase.ts          # Supabase client and admin email
+└── supabase/
+    └── schema.sql               # Live admin database tables and security rules
 ```
 
 ---
@@ -132,3 +144,22 @@ This application provides parents, learners, educators, and community members wi
    ```bash
    npm run lint
    ```
+
+---
+
+## Live Admin Setup
+
+The admin page is available from the website navigation, but it only becomes active after Supabase is configured.
+
+1. Create a Supabase project.
+2. Open the Supabase SQL editor and run `supabase/schema.sql`.
+3. In Supabase Authentication, create or invite the admin user `blanknava205@gmail.com`.
+4. Set a password for that user in Supabase Auth.
+5. Add these environment variables to the hosting platform:
+   ```bash
+   VITE_SUPABASE_URL="https://your-project.supabase.co"
+   VITE_SUPABASE_ANON_KEY="your-public-anon-key"
+   ```
+6. Redeploy the website and sign in from the Admin page.
+
+Do not commit Supabase service-role keys or database passwords to this repository. The website only needs the public anon key because row-level security protects writes.

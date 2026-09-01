@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Download, Printer, X, FileText, CheckCircle } from 'lucide-react';
-import { ADMISSION_FORM_PATH, downloadAdmissionForm, openAdmissionForm } from '../utils/admissionForm';
+import { Download, ExternalLink, X, FileText, CheckCircle } from 'lucide-react';
+import { ADMISSION_FORM_PATH, ADMISSION_FORM_PREVIEW_PAGES, downloadAdmissionForm, openAdmissionForm } from '../utils/admissionForm';
 
 interface AdmissionFormModalProps {
   isOpen: boolean;
@@ -59,10 +59,10 @@ export const AdmissionFormModal: React.FC<AdmissionFormModalProps> = ({ isOpen, 
             <button
               onClick={handlePrint}
               className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-bold transition cursor-pointer"
-              title="Print Application Form"
+              title="Open Application Form"
             >
-              <Printer className="w-4 h-4" />
-              <span>Print Form</span>
+              <ExternalLink className="w-4 h-4" />
+              <span>Open PDF</span>
             </button>
 
             <button
@@ -110,17 +110,25 @@ export const AdmissionFormModal: React.FC<AdmissionFormModalProps> = ({ isOpen, 
 
           <div className="flex items-center gap-2 text-xs text-neutral-600">
             <CheckCircle className="w-4 h-4 text-emerald-600" />
-            <span>Official PDF ready to view, download, or print</span>
+            <span>Showing image preview to avoid Chrome PDF blocking</span>
           </div>
         </div>
 
         {/* Form Document Viewport */}
-        <div className="p-4 sm:p-8 overflow-y-auto bg-neutral-200/60 flex-1">
-          <iframe
-            src={`${ADMISSION_FORM_PATH}#page=${activePage}`}
-            title={`Phikiswayo Primary School admission form page ${activePage}`}
-            className="w-full min-h-[70vh] rounded-xl border border-neutral-300 bg-white shadow-xl"
-          />
+        <div className="p-4 sm:p-8 overflow-y-auto bg-neutral-200/60 flex-1 flex justify-center">
+          <a
+            href={ADMISSION_FORM_PATH}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full max-w-[820px]"
+            title="Open official admission PDF in a new tab"
+          >
+            <img
+              src={ADMISSION_FORM_PREVIEW_PAGES[activePage - 1]}
+              alt={`Admission form preview page ${activePage}`}
+              className="w-full rounded-xl border border-neutral-300 bg-white shadow-xl"
+            />
+          </a>
         </div>
 
         {/* Modal Footer Controls */}

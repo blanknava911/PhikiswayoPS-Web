@@ -6,7 +6,8 @@ import {
   Phone, 
   Mail, 
   ArrowUp, 
-  Download
+  Download,
+  LockKeyhole
 } from 'lucide-react';
 import { downloadAdmissionForm } from '../utils/admissionForm';
 
@@ -116,6 +117,16 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
                   id="footer-nav-contact"
                 >
                   <span>Contact & Socials</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => { setActiveTab('admin'); scrollToTop(); }}
+                  className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+                  id="footer-nav-admin"
+                >
+                  <LockKeyhole className="w-3.5 h-3.5" />
+                  <span>Admin Login</span>
                 </button>
               </li>
             </ul>

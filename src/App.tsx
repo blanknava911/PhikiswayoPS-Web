@@ -8,6 +8,7 @@ import { EventsSection } from './components/EventsSection';
 import { NewsSection } from './components/NewsSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
+import { AdminSection } from './components/AdminSection';
 import { publicAssetPath } from './utils/assets';
 
 interface PageHeaderProps {
@@ -121,6 +122,17 @@ export function App() {
               description="348 Khangela Street, Ntuzuma A, KwaZulu-Natal. We are ready to assist you."
             />
             <ContactSection />
+          </>
+        )}
+
+        {activeTab === 'admin' && (
+          <>
+            <PageHeader
+              eyebrow="Secure Updates"
+              title="Admin Login"
+              description="Manage live school notices and events for parents, guardians, and learners."
+            />
+            <AdminSection />
           </>
         )}
       </main>

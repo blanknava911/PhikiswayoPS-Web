@@ -1,4 +1,4 @@
-export type TabType = 'home' | 'about' | 'admissions' | 'events' | 'news' | 'contact' | 'assistant';
+export type TabType = 'home' | 'about' | 'admissions' | 'events' | 'news' | 'contact' | 'admin';
 
 export type EventCategory = 'all' | 'academic' | 'sports' | 'community';
 
@@ -81,4 +81,16 @@ export interface NoticeItem {
   summary: string;
   audience: string;
   pinned?: boolean;
+}
+
+export interface EventItem {
+  id: string;
+  title: string;
+  category: 'academic' | 'sports' | 'meetings';
+  categoryLabel: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  imageUrl: string;
 }

@@ -10,7 +10,8 @@ import {
   Send, 
   Home,
   Newspaper,
-  Download
+  Download,
+  LockKeyhole
 } from 'lucide-react';
 import { downloadAdmissionForm } from '../utils/admissionForm';
 
@@ -40,6 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'events' as TabType, label: 'Events', icon: Calendar },
     { id: 'news' as TabType, label: 'News', icon: Newspaper },
     { id: 'contact' as TabType, label: 'Contact & Socials', icon: Send },
+    { id: 'admin' as TabType, label: 'Admin', icon: LockKeyhole },
   ];
 
   const handleNavClick = (tab: TabType) => {

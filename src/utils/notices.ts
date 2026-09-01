@@ -1,22 +1,29 @@
 import { NoticeItem } from '../types';
+import { supabase } from './supabase';
 
 export async function fetchLiveNotices(): Promise<NoticeItem[] | null> {
-  const endpoint = import.meta.env.VITE_NOTICES_API_URL;
-
-  if (!endpoint || !/^https:\/\//.test(endpoint)) {
+  if (!supabase) {
     return null;
   }
 
-  const response = await fetch(endpoint, {
-    headers: {
-      Accept: 'application/json',
-    },
-  });
+  const { data, error } = await supabase
+    .from('notices')
+    .select('id,title,published_at,category,summary,audience,pinned')
+    .eq('published', true)
+    .order('pinned', { ascending: false })
+    .order('published_at', { ascending: false });
 
-  if (!response.ok) {
-    throw new Error(`Notices request failed with status ${response.status}`);
+  if (error) {
+    throw error;
   }
 
-  const notices = await response.json();
-  return Array.isArray(notices) ? notices : null;
+  return data?.map((notice) => ({
+    id: notice.id,
+    title: notice.title,
+    date: notice.published_at,
+    category: notice.category,
+    summary: notice.summary,
+    audience: notice.audience,
+    pinned: notice.pinned,
+  })) ?? null;
 }

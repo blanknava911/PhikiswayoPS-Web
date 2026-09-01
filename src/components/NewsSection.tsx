@@ -20,7 +20,7 @@ export const NewsSection: React.FC = () => {
 
     fetchLiveNotices()
       .then((liveNotices) => {
-        if (isMounted && liveNotices?.length) {
+        if (isMounted && liveNotices !== null) {
           setNotices(liveNotices);
         }
       })
