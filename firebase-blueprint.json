@@ -1,0 +1,142 @@
+{
+  "entities": {
+    "Notice": {
+      "title": "School Notice",
+      "description": "Official announcement or communication from Phikiswayo Primary School",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Notice headline or title",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "published_at": {
+          "type": "string",
+          "description": "ISO date string representing notice date (YYYY-MM-DD)",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "category": {
+          "type": "string",
+          "description": "Notice category",
+          "enum": ["general", "admissions", "academic", "events"]
+        },
+        "summary": {
+          "type": "string",
+          "description": "Detailed text content of the notice",
+          "minLength": 5,
+          "maxLength": 2000
+        },
+        "audience": {
+          "type": "string",
+          "description": "Target audience for the notice",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "pinned": {
+          "type": "boolean",
+          "description": "Whether the notice is pinned to the top of the feed"
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Whether the notice is visible to public visitors"
+        },
+        "authorEmail": {
+          "type": "string",
+          "description": "Email of the admin user who created the notice",
+          "maxLength": 150
+        }
+      },
+      "required": [
+        "title",
+        "published_at",
+        "category",
+        "summary",
+        "audience",
+        "pinned",
+        "published"
+      ]
+    },
+    "SchoolEvent": {
+      "title": "School Event",
+      "description": "Calendar event or scheduled school activity",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title or headline of the event",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "category": {
+          "type": "string",
+          "description": "Event classification category",
+          "enum": ["academic", "sports", "meetings"]
+        },
+        "category_label": {
+          "type": "string",
+          "description": "Friendly display name of the category",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "event_date": {
+          "type": "string",
+          "description": "Date of the event in YYYY-MM-DD format",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "event_time": {
+          "type": "string",
+          "description": "Time of the event (e.g. 08:00 or 08:00 - 12:00)",
+          "minLength": 2,
+          "maxLength": 50
+        },
+        "location": {
+          "type": "string",
+          "description": "Venue or location of the event",
+          "minLength": 2,
+          "maxLength": 200
+        },
+        "description": {
+          "type": "string",
+          "description": "Full details and description of the event",
+          "minLength": 5,
+          "maxLength": 3000
+        },
+        "image_url": {
+          "type": "string",
+          "description": "URL to event banner image",
+          "maxLength": 1000
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Whether the event is published to public visitors"
+        },
+        "authorEmail": {
+          "type": "string",
+          "description": "Email of the admin user who created the event",
+          "maxLength": 150
+        }
+      },
+      "required": [
+        "title",
+        "category",
+        "category_label",
+        "event_date",
+        "event_time",
+        "location",
+        "description",
+        "published"
+      ]
+    }
+  },
+  "firestore": {
+    "/notices/{noticeId}": {
+      "schema": "Notice",
+      "description": "School notices and announcements collection"
+    },
+    "/events/{eventId}": {
+      "schema": "SchoolEvent",
+      "description": "School events and calendar collection"
+    }
+  }
+}

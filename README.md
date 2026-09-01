@@ -53,11 +53,13 @@ This application provides parents, learners, educators, and community members wi
 - **Announcement Feed**: Dedicated parent-facing notices section for admissions updates, document reminders, and school office notices.
 - **Live Notices Ready**: Reads published notices from Supabase when the live admin database is connected, with saved notices as the fallback.
 
-#### 7. **Live Admin (`AdminSection.tsx`)**
-- **Secure Login**: Admin login is enabled for `blanknava205@gmail.com` after the user is created in Supabase Auth.
+#### 7. **Live Firebase Admin (`AdminSection.tsx`)**
+- **Google Authentication**: Admin authentication powered by Google Sign-In with popup, checking verified credentials for `blanknava205@gmail.com`.
+- **Cloud Firestore Persistence**: Real-time storage for notices and events in `notices` and `events` collections.
+- **Hardened Security Rules (`firestore.rules`)**: ABAC security rules with zero-trust validation preventing ghost fields, oversized payloads, invalid enums, and unverified mutations.
 - **Editable Notices**: Create, edit, publish, unpublish, pin, and delete school notices.
 - **Editable Events**: Create, edit, publish, unpublish, and delete school events that appear on the live website.
-- **Database Rules**: Supabase row-level security allows public visitors to read published content only, while write access is limited to the approved admin account.
+- **Seed Utility**: Quick action to populate default school announcements and calendar milestones directly to Firestore.
 
 #### 8. **Contact Directory & Community Channels (`ContactSection.tsx`)**
 - **Interactive Contact Cards**:
@@ -80,7 +82,7 @@ This application provides parents, learners, educators, and community members wi
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **Iconography** | [Lucide React](https://lucide.dev/) |
 | **Admission Form** | Static official PDF served from `public/admission-form.pdf` |
-| **Live Admin** | Supabase Auth, database tables, and row-level security |
+| **Cloud Database & Auth** | Google Cloud Firebase (Firestore & Firebase Auth) |
 | **Typography** | Plus Jakarta Sans (Body & UI) & Playfair Display (Headings & Crest) |
 
 ---
@@ -88,6 +90,10 @@ This application provides parents, learners, educators, and community members wi
 ## 📁 Project Structure
 
 ```
+├── firebase-applet-config.json  # Firebase configuration and credentials
+├── firebase-blueprint.json      # Firestore schema blueprint
+├── firestore.rules              # Zero-trust ABAC security rules for Firestore
+├── security_spec.md             # Security specifications & test cases
 ├── index.html                   # Entry HTML with typography & SEO metadata
 ├── metadata.json                # Project metadata & platform configuration
 ├── package.json                 # Dependencies and build scripts
@@ -105,7 +111,7 @@ This application provides parents, learners, educators, and community members wi
 │   │   ├── AdmissionFormModal.tsx# Digital preview & print modal for application form
 │   │   ├── EventsSection.tsx    # School calendar & categorized events
 │   │   ├── NewsSection.tsx      # School news and notices
-│   │   ├── AdminSection.tsx     # Supabase-backed login and live content editor
+│   │   ├── AdminSection.tsx     # Firebase-backed Google sign-in and live content editor
 │   │   ├── ContactSection.tsx   # Contact directory & social media connections
 │   │   ├── Footer.tsx           # Site footer & quick links
 │   │   └── SchoolCrest.tsx      # Reusable official school logo image component
@@ -114,11 +120,10 @@ This application provides parents, learners, educators, and community members wi
 │   └── utils/
 │       ├── admissionForm.ts     # Admission form download/open helpers
 │       ├── assets.ts            # Deployment-safe static asset paths
-│       ├── events.ts            # Optional live events loader
-│       ├── notices.ts           # Optional live notices loader
-│       └── supabase.ts          # Supabase client and admin email
-└── supabase/
-    └── schema.sql               # Live admin database tables and security rules
+│       ├── events.ts            # Live events loader
+│       ├── firebase.ts          # Firebase SDK initialization, auth & error handlers
+│       ├── notices.ts           # Live notices loader
+│       └── supabase.ts          # Supabase client and admin email fallback
 ```
 
 ---
@@ -149,17 +154,10 @@ This application provides parents, learners, educators, and community members wi
 
 ## Live Admin Setup
 
-The admin page is available from the website navigation, but it only becomes active after Supabase is configured.
+The admin page is directly accessible via the top navigation and footer.
 
-1. Create a Supabase project.
-2. Open the Supabase SQL editor and run `supabase/schema.sql`.
-3. In Supabase Authentication, create or invite the admin user `blanknava205@gmail.com`.
-4. Set a password for that user in Supabase Auth.
-5. Add these environment variables to the hosting platform:
-   ```bash
-   VITE_SUPABASE_URL="https://your-project.supabase.co"
-   VITE_SUPABASE_ANON_KEY="your-public-anon-key"
-   ```
-6. Redeploy the website and sign in from the Admin page.
+1. Navigate to the **Admin** tab.
+2. Click **Sign in with Google**.
+3. Authenticate with the approved school administrator email (`blanknava205@gmail.com`).
+4. Publish, modify, or remove notices and calendar items instantly in Google Cloud Firebase Firestore.
 
-Do not commit Supabase service-role keys or database passwords to this repository. The website only needs the public anon key because row-level security protects writes.
