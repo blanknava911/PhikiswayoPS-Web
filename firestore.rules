@@ -32,12 +32,14 @@ service cloud.firestore {
     function isSchoolAdmin() {
       return isVerified() && (
         request.auth.token.email.lower() == 'blanknava205@gmail.com' ||
+        request.auth.token.email.lower() == 'phikiswayop@gmail.com' ||
         exists(/databases/$(database)/documents/admins/$(request.auth.uid))
       );
     }
 
     function isValidNotice(data) {
-      return data.title is string && data.title.size() >= 3 && data.title.size() <= 200 &&
+      return data.keys().hasOnly(['title', 'published_at', 'category', 'summary', 'audience', 'pinned', 'published', 'authorEmail']) &&
+             data.title is string && data.title.size() >= 3 && data.title.size() <= 200 &&
              data.published_at is string && data.published_at.size() == 10 && data.published_at.matches('^\\d{4}-\\d{2}-\\d{2}$') &&
              data.category is string && data.category in ['general', 'admissions', 'academic', 'events'] &&
              data.summary is string && data.summary.size() >= 5 && data.summary.size() <= 2000 &&
@@ -48,7 +50,8 @@ service cloud.firestore {
     }
 
     function isValidEvent(data) {
-      return data.title is string && data.title.size() >= 3 && data.title.size() <= 200 &&
+      return data.keys().hasOnly(['title', 'category', 'category_label', 'event_date', 'event_time', 'location', 'description', 'image_url', 'published', 'authorEmail']) &&
+             data.title is string && data.title.size() >= 3 && data.title.size() <= 200 &&
              data.category is string && data.category in ['academic', 'sports', 'meetings'] &&
              data.category_label is string && data.category_label.size() >= 2 && data.category_label.size() <= 100 &&
              data.event_date is string && data.event_date.size() == 10 && data.event_date.matches('^\\d{4}-\\d{2}-\\d{2}$') &&

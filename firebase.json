@@ -1,0 +1,9 @@
+{
+  "firestore": [
+    {
+      "database": "ai-studio-phikiswayoprimar-ad6cae2e-8746-43d0-b8b8-6c6eff208322",
+      "rules": "firestore.rules",
+      "indexes": "firestore.indexes.json"
+    }
+  ]
+}

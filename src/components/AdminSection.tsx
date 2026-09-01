@@ -14,9 +14,10 @@ import {
 } from 'lucide-react';
 import { EventItem, NoticeItem } from '../types';
 import {
-  ADMIN_EMAIL,
+  ADMIN_EMAILS,
   fetchFirebaseEvents,
   fetchFirebaseNotices,
+  isAdminEmail,
   saveFirebaseEvent,
   saveFirebaseNotice,
   deleteFirebaseEvent,
@@ -74,7 +75,8 @@ export const AdminSection: React.FC = () => {
   const [noticeForm, setNoticeForm] = useState<AdminNotice | Omit<AdminNotice, 'id'>>(emptyNotice);
   const [eventForm, setEventForm] = useState<AdminEvent | Omit<AdminEvent, 'id'>>(emptyEvent);
 
-  const isAllowedAdmin = sessionEmail?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  const isAllowedAdmin = isAdminEmail(sessionEmail);
+  const adminList = ADMIN_EMAILS.join(' or ');
 
   const loadContent = useCallback(async () => {
     if (!isAllowedAdmin) {
@@ -157,10 +159,10 @@ export const AdminSection: React.FC = () => {
 
     try {
       const user = await signInAdminWithGoogle();
-      if (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+      if (isAdminEmail(user.email)) {
         setMessage('Admin sign-in successful. Welcome!');
       } else {
-        setError(`Signed in as ${user.email}. This account is not authorized. Please sign in with ${ADMIN_EMAIL}.`);
+        setError(`Signed in as ${user.email}. This account is not authorized. Please sign in with ${adminList}.`);
       }
     } catch (loginError: unknown) {
       console.error('Google sign-in error:', loginError);
@@ -371,7 +373,7 @@ export const AdminSection: React.FC = () => {
                   School Admin Login
                 </h3>
                 <p className="text-xs text-neutral-500">
-                  Authorized Admin: <strong>{ADMIN_EMAIL}</strong>
+                  Authorized admins: <strong>{adminList}</strong>
                 </p>
               </div>
             </div>
@@ -397,7 +399,7 @@ export const AdminSection: React.FC = () => {
           <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-900 max-w-xl">
             <h3 className="mb-2 font-display text-xl font-extrabold">Unauthorized Account</h3>
             <p className="leading-relaxed">
-              Signed in as <strong>{sessionEmail}</strong>. Only <strong>{ADMIN_EMAIL}</strong> has administrator permissions for Phikiswayo Primary School.
+              Signed in as <strong>{sessionEmail}</strong>. Only <strong>{adminList}</strong> have administrator permissions for Phikiswayo Primary School.
             </p>
             <button
               type="button"

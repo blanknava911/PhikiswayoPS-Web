@@ -6,7 +6,9 @@ create table if not exists public.admin_users (
 );
 
 insert into public.admin_users (email)
-values ('blanknava205@gmail.com')
+values
+  ('blanknava205@gmail.com'),
+  ('phikiswayop@gmail.com')
 on conflict (email) do nothing;
 
 create table if not exists public.notices (

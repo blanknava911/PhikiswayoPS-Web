@@ -5,9 +5,7 @@ import { supabase } from './supabase';
 export async function fetchLiveEvents(): Promise<EventItem[] | null> {
   try {
     const firebaseEvents = await fetchFirebaseEvents(false);
-    if (firebaseEvents && firebaseEvents.length > 0) {
-      return firebaseEvents;
-    }
+    return firebaseEvents;
   } catch (err) {
     console.warn('Firebase events fetch notice: falling back to Supabase/static data', err);
   }

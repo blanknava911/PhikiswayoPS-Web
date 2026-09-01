@@ -25,7 +25,12 @@ import {
 import firebaseConfig from '../../firebase-applet-config.json';
 import { EventItem, NoticeItem } from '../types';
 
-export const ADMIN_EMAIL = 'blanknava205@gmail.com';
+export const ADMIN_EMAILS = ['blanknava205@gmail.com', 'phikiswayop@gmail.com'] as const;
+export const ADMIN_EMAIL = ADMIN_EMAILS[0];
+
+export function isAdminEmail(email?: string | null): boolean {
+  return Boolean(email && ADMIN_EMAILS.some((adminEmail) => adminEmail.toLowerCase() === email.toLowerCase()));
+}
 
 export enum OperationType {
   CREATE = 'create',

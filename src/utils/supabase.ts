@@ -3,7 +3,8 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 const rawUrl = import.meta.env.VITE_SUPABASE_URL;
 const rawAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const ADMIN_EMAIL = 'blanknava205@gmail.com';
+export const ADMIN_EMAILS = ['blanknava205@gmail.com', 'phikiswayop@gmail.com'] as const;
+export const ADMIN_EMAIL = ADMIN_EMAILS[0];
 
 function getSupabaseClient(): SupabaseClient | null {
   if (!rawUrl || typeof rawUrl !== 'string' || !rawAnonKey || typeof rawAnonKey !== 'string') {

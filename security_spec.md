@@ -2,8 +2,8 @@
 
 ## 1. Data Invariants
 1. **Public Read Access**: Unauthenticated and public users can only read documents in `/notices` and `/events` where `published == true`.
-2. **Draft Isolation**: Any notice or event where `published == false` (or draft state) is strictly restricted to authenticated and verified school administrators (`blanknava205@gmail.com`).
-3. **Write Integrity & Admin Authorization**: All write operations (`create`, `update`, `delete`) on `/notices` and `/events` require an authenticated user with a verified email matching the authorized school administrator (`blanknava205@gmail.com`).
+2. **Draft Isolation**: Any notice or event where `published == false` (or draft state) is strictly restricted to authenticated and verified school administrators (`blanknava205@gmail.com` or `phikiswayop@gmail.com`).
+3. **Write Integrity & Admin Authorization**: All write operations (`create`, `update`, `delete`) on `/notices` and `/events` require an authenticated user with a verified email matching an authorized school administrator (`blanknava205@gmail.com` or `phikiswayop@gmail.com`).
 4. **Boundary & Schema Validation**: Incoming payloads for notices and events must strictly pass validation:
    - Strings must be bounded in length (e.g., titles <= 200 chars, summaries <= 2000 chars).
    - Date formats must match standard ISO YYYY-MM-DD pattern.
@@ -25,7 +25,7 @@
 3. **Payload 3 (Non-Admin User Creation Attempt)**:
    - Auth: `{ email: "attacker@gmail.com", email_verified: true }`
    - Action: `create` on `/notices/test-notice`
-   - *Expected Outcome*: Rejected (Email is not `blanknava205@gmail.com`).
+   - *Expected Outcome*: Rejected (Email is not an approved school administrator).
 
 4. **Payload 4 (Unauthenticated Write Attempt)**:
    - Auth: `null`

@@ -5,9 +5,7 @@ import { supabase } from './supabase';
 export async function fetchLiveNotices(): Promise<NoticeItem[] | null> {
   try {
     const firebaseNotices = await fetchFirebaseNotices(false);
-    if (firebaseNotices && firebaseNotices.length > 0) {
-      return firebaseNotices;
-    }
+    return firebaseNotices;
   } catch (err) {
     console.warn('Firebase notices fetch notice: falling back to Supabase/static data', err);
   }
