@@ -1,10 +1,17 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const rawUrl = import.meta.env.VITE_SUPABASE_URL;
-const rawAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const DEFAULT_SUPABASE_URL = 'https://xykqcgnlyxhxtrlhjesv.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_QWsDyojCNCJeCGMcfj7YHQ_QSs0YcSl';
+
+const rawUrl = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const rawAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
 export const ADMIN_EMAILS = ['blanknava205@gmail.com', 'phikiswayop@gmail.com'] as const;
 export const ADMIN_EMAIL = ADMIN_EMAILS[0];
+
+export function isAdminEmail(email?: string | null): boolean {
+  return Boolean(email && ADMIN_EMAILS.some((adminEmail) => adminEmail.toLowerCase() === email.toLowerCase()));
+}
 
 function getSupabaseClient(): SupabaseClient | null {
   if (!rawUrl || typeof rawUrl !== 'string' || !rawAnonKey || typeof rawAnonKey !== 'string') {

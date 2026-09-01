@@ -51,13 +51,15 @@ This application provides parents, learners, educators, and community members wi
 
 #### 6. **News & Notices (`NewsSection.tsx`)**
 - **Announcement Feed**: Dedicated parent-facing notices section for admissions updates, document reminders, and school office notices.
-- **Live Notices Ready**: Reads published notices from the database/local persistence when connected, with saved notices as the fallback.
+- **Live Notices Ready**: Reads published notices from Supabase when the live admin database is connected, with saved notices as the fallback if Supabase is unavailable.
 
-#### 7. **School Management Portal (`AdminSection.tsx`)**
-- **Administrator Access**: Secure admin access for approved school accounts (`blanknava205@gmail.com` and `phikiswayop@gmail.com`).
+#### 7. **Live Supabase Admin (`AdminSection.tsx`)**
+- **Email Login**: Admin authentication powered by Supabase Auth for `blanknava205@gmail.com` and `phikiswayop@gmail.com`.
+- **Cloud Database Persistence**: Live storage for notices and events in `notices` and `events` tables.
+- **Row-Level Security**: Public visitors can only read published content, while writes are limited to approved admin emails.
 - **Editable Notices**: Create, edit, publish, unpublish, pin, and delete school notices.
 - **Editable Events**: Create, edit, publish, unpublish, and delete school events that appear on the live website.
-- **Seed Utility**: Quick action to populate default school announcements and calendar milestones.
+- **Seed Utility**: Quick action to populate default school announcements and calendar milestones directly to Supabase.
 
 #### 8. **Contact Directory & Community Channels (`ContactSection.tsx`)**
 - **Interactive Contact Cards**:
@@ -80,7 +82,7 @@ This application provides parents, learners, educators, and community members wi
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **Iconography** | [Lucide React](https://lucide.dev/) |
 | **Admission Form** | Static official PDF served from `public/admission-form.pdf` |
-| **Cloud Database & Auth** | Google Cloud Firebase (Firestore & Firebase Auth) |
+| **Cloud Database & Auth** | Supabase Auth, Postgres, and row-level security |
 | **Typography** | Plus Jakarta Sans (Body & UI) & Playfair Display (Headings & Crest) |
 
 ---
@@ -88,12 +90,6 @@ This application provides parents, learners, educators, and community members wi
 ## 📁 Project Structure
 
 ```
-├── firebase-applet-config.json  # Firebase configuration and credentials
-├── firebase-blueprint.json      # Firestore schema blueprint
-├── firebase.json                # Firebase deployment config for rules and indexes
-├── firestore.indexes.json       # Firestore indexes required by live queries
-├── firestore.rules              # Zero-trust ABAC security rules for Firestore
-├── security_spec.md             # Security specifications & test cases
 ├── index.html                   # Entry HTML with typography & SEO metadata
 ├── metadata.json                # Project metadata & platform configuration
 ├── package.json                 # Dependencies and build scripts
@@ -111,7 +107,7 @@ This application provides parents, learners, educators, and community members wi
 │   │   ├── AdmissionFormModal.tsx# Digital preview & print modal for application form
 │   │   ├── EventsSection.tsx    # School calendar & categorized events
 │   │   ├── NewsSection.tsx      # School news and notices
-│   │   ├── AdminSection.tsx     # Firebase-backed Google sign-in and live content editor
+│   │   ├── AdminSection.tsx     # Supabase-backed login and live content editor
 │   │   ├── ContactSection.tsx   # Contact directory & social media connections
 │   │   ├── Footer.tsx           # Site footer & quick links
 │   │   └── SchoolCrest.tsx      # Reusable official school logo image component
@@ -121,9 +117,10 @@ This application provides parents, learners, educators, and community members wi
 │       ├── admissionForm.ts     # Admission form download/open helpers
 │       ├── assets.ts            # Deployment-safe static asset paths
 │       ├── events.ts            # Live events loader
-│       ├── firebase.ts          # Firebase SDK initialization, auth & error handlers
 │       ├── notices.ts           # Live notices loader
-│       └── supabase.ts          # Supabase client and admin email fallback
+│       └── supabase.ts          # Supabase client and admin email allowlist
+└── supabase/
+    └── schema.sql               # Supabase tables, seed data, and security rules
 ```
 
 ---
@@ -156,8 +153,12 @@ This application provides parents, learners, educators, and community members wi
 
 The admin portal is directly accessible via the top navigation and footer.
 
-1. Navigate to the **Admin** tab.
-2. Sign in with an approved school administrator email (`blanknava205@gmail.com` or `phikiswayop@gmail.com`).
-3. Publish, modify, or remove notices and calendar items instantly.
-4. Optional: If connecting Supabase, provide `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in environment variables.
+1. Open your Supabase project: `https://xykqcgnlyxhxtrlhjesv.supabase.co`.
+2. Open **SQL Editor** and run `supabase/schema.sql`.
+3. Open **Authentication > Users** and create users for `blanknava205@gmail.com` and `phikiswayop@gmail.com`.
+4. Set passwords for those users.
+5. Redeploy the website.
+6. Navigate to the **Admin** tab and sign in with one of the approved emails.
+
+The website uses the public Supabase publishable key. Do not commit the database password or service-role key.
 

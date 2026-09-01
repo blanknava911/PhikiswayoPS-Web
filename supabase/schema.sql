@@ -41,6 +41,15 @@ create table if not exists public.events (
   updated_at timestamptz not null default now()
 );
 
+create unique index if not exists notices_title_published_at_key
+on public.notices (title, published_at);
+
+create index if not exists notices_public_order_idx
+on public.notices (published, pinned desc, published_at desc);
+
+create index if not exists events_public_order_idx
+on public.events (published, event_date asc);
+
 create or replace function public.is_school_admin()
 returns boolean
 language sql
@@ -141,4 +150,4 @@ values
   ('2027 Admission Applications', '2026-09-15', 'admissions', 'Parents and guardians can download the official admission form and submit completed applications at the school administration office.', 'Parents and guardians', true, true),
   ('Certified Documents Required', '2026-09-15', 'general', 'Please bring certified copies of parent or guardian ID, learner birth certificate, clinic card, proof of address, latest report, and transfer card where applicable.', 'New applicants', false, true),
   ('Office Hours for Enquiries', '2026-09-01', 'general', 'The school office is open Monday to Friday from 07:30 to 15:30 during term time for admission and general enquiries.', 'School community', false, true)
-on conflict do nothing;
+on conflict (title, published_at) do nothing;
