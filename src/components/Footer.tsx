@@ -28,8 +28,8 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
           {/* Brand Col */}
           <div className="lg:col-span-5 space-y-4" id="footer-brand-col">
             <div className="flex items-center gap-3">
-              <div className="p-1 rounded-xl bg-neutral-900 border border-neutral-800">
-                <SchoolCrest size={40} />
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-md bg-white p-1 ring-1 ring-neutral-800">
+                <SchoolCrest size={50} />
               </div>
               <div>
                 <h3 className="text-xl font-bold font-display text-white">
@@ -98,6 +98,15 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
                   id="footer-nav-events"
                 >
                   <span>Events</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => { setActiveTab('news'); scrollToTop(); }}
+                  className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+                  id="footer-nav-news"
+                >
+                  <span>News & Notices</span>
                 </button>
               </li>
               <li>

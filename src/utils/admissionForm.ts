@@ -1,4 +1,6 @@
-export const ADMISSION_FORM_PATH = '/admission-form.pdf';
+import { publicAssetPath } from './assets';
+
+export const ADMISSION_FORM_PATH = publicAssetPath('admission-form.pdf');
 export const ADMISSION_FORM_FILENAME = 'Phikiswayo_Primary_School_Admission_Form.pdf';
 
 export function downloadAdmissionForm() {

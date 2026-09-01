@@ -1,4 +1,4 @@
-export type TabType = 'home' | 'about' | 'admissions' | 'events' | 'contact' | 'assistant';
+export type TabType = 'home' | 'about' | 'admissions' | 'events' | 'news' | 'contact' | 'assistant';
 
 export type EventCategory = 'all' | 'academic' | 'sports' | 'community';
 
@@ -71,4 +71,14 @@ export interface FAQItem {
   question: string;
   answer: string;
   category: string;
+}
+
+export interface NoticeItem {
+  id: string;
+  title: string;
+  date: string;
+  category: 'general' | 'admissions' | 'academic' | 'events';
+  summary: string;
+  audience: string;
+  pinned?: boolean;
 }

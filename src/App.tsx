@@ -5,8 +5,39 @@ import { HeroSection } from './components/HeroSection';
 import { AboutSection } from './components/AboutSection';
 import { AdmissionsSection } from './components/AdmissionsSection';
 import { EventsSection } from './components/EventsSection';
+import { NewsSection } from './components/NewsSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
+import { publicAssetPath } from './utils/assets';
+
+interface PageHeaderProps {
+  eyebrow: string;
+  title: string;
+  description: string;
+}
+
+const PageHeader: React.FC<PageHeaderProps> = ({ eyebrow, title, description }) => (
+  <div className="relative overflow-hidden bg-neutral-950 text-white py-12 px-4 sm:px-8 text-center space-y-2">
+    <img
+      src={publicAssetPath('school-hero.jpg')}
+      alt=""
+      aria-hidden="true"
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+    <div className="absolute inset-0 bg-black/70" />
+    <div className="relative z-10 space-y-2">
+      <span className="text-xs font-bold text-red-100 uppercase tracking-widest">
+        {eyebrow}
+      </span>
+      <h1 className="text-3xl sm:text-5xl font-extrabold font-display">
+        {title}
+      </h1>
+      <p className="text-red-50 text-sm sm:text-base max-w-xl mx-auto">
+        {description}
+      </p>
+    </div>
+  </div>
+);
 
 export function App() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
@@ -32,6 +63,7 @@ export function App() {
             <HeroSection setActiveTab={setActiveTab} />
             <AboutSection setActiveTab={setActiveTab} />
             <AdmissionsSection />
+            <NewsSection />
             <EventsSection />
             <ContactSection />
           </>
@@ -39,68 +71,55 @@ export function App() {
 
         {activeTab === 'about' && (
           <>
-            <div className="bg-[#ff2121] text-white py-12 px-4 sm:px-8 text-center space-y-2">
-              <span className="text-xs font-bold text-red-100 uppercase tracking-widest">
-                Our Identity & Heritage
-              </span>
-              <h1 className="text-3xl sm:text-5xl font-extrabold font-display">
-                About Phikiswayo Primary School
-              </h1>
-              <p className="text-red-50 text-sm sm:text-base max-w-xl mx-auto">
-                Quality education in the heart of Ntuzuma, KwaZulu-Natal — living our motto: "Strive for Success".
-              </p>
-            </div>
+            <PageHeader
+              eyebrow="Our Identity & Heritage"
+              title="About Phikiswayo Primary School"
+              description={'Quality education in the heart of Ntuzuma, KwaZulu-Natal - living our motto: "Strive for Success".'}
+            />
             <AboutSection setActiveTab={setActiveTab} />
           </>
         )}
 
         {activeTab === 'admissions' && (
           <>
-            <div className="bg-[#ff2121] text-white py-12 px-4 sm:px-8 text-center space-y-2">
-              <span className="text-xs font-bold text-red-100 uppercase tracking-widest">
-                Enrolment Information
-              </span>
-              <h1 className="text-3xl sm:text-5xl font-extrabold font-display">
-                Admissions & Enrolment
-              </h1>
-              <p className="text-red-50 text-sm sm:text-base max-w-xl mx-auto">
-                In-person admission steps, required document checklist, and school administration office details.
-              </p>
-            </div>
+            <PageHeader
+              eyebrow="Enrolment Information"
+              title="Admissions & Enrolment"
+              description="In-person admission steps, required document checklist, and school administration office details."
+            />
             <AdmissionsSection />
           </>
         )}
 
         {activeTab === 'events' && (
           <>
-            <div className="bg-[#ff2121] text-white py-12 px-4 sm:px-8 text-center space-y-2">
-              <span className="text-xs font-bold text-red-100 uppercase tracking-widest">
-                Calendar & Highlights
-              </span>
-              <h1 className="text-3xl sm:text-5xl font-extrabold font-display">
-                School Events & News
-              </h1>
-              <p className="text-red-50 text-sm sm:text-base max-w-xl mx-auto">
-                Stay updated with our academic assessments, athletic tournaments, and parent meetings.
-              </p>
-            </div>
+            <PageHeader
+              eyebrow="Calendar & Highlights"
+              title="School Events"
+              description="Stay updated with our academic assessments, athletic tournaments, and parent meetings."
+            />
             <EventsSection />
+          </>
+        )}
+
+        {activeTab === 'news' && (
+          <>
+            <PageHeader
+              eyebrow="Announcements"
+              title="News & Notices"
+              description="Important updates for parents, guardians, learners, and the school community."
+            />
+            <NewsSection />
           </>
         )}
 
         {activeTab === 'contact' && (
           <>
-            <div className="bg-[#ff2121] text-white py-12 px-4 sm:px-8 text-center space-y-2">
-              <span className="text-xs font-bold text-red-100 uppercase tracking-widest">
-                Get In Touch
-              </span>
-              <h1 className="text-3xl sm:text-5xl font-extrabold font-display">
-                Contact & Socials Directory
-              </h1>
-              <p className="text-red-50 text-sm sm:text-base max-w-xl mx-auto">
-                348 Khangela Street, Ntuzuma A, KwaZulu-Natal. We are ready to assist you.
-              </p>
-            </div>
+            <PageHeader
+              eyebrow="Get In Touch"
+              title="Contact & Socials Directory"
+              description="348 Khangela Street, Ntuzuma A, KwaZulu-Natal. We are ready to assist you."
+            />
             <ContactSection />
           </>
         )}

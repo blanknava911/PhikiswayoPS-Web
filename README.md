@@ -49,14 +49,18 @@ This application provides parents, learners, educators, and community members wi
 - **Category Filter Tabs**: Interactive filtering across **All Events**, **Academic**, **Sports & Athletics**, and **Parent Meetings**.
 - **Event Cards**: Rich cards with visual imagery, badge categories, scheduled dates, times, campus locations, and descriptive overviews.
 
-#### 6. **Contact Directory & Community Channels (`ContactSection.tsx`)**
+#### 6. **News & Notices (`NewsSection.tsx`)**
+- **Announcement Feed**: Dedicated parent-facing notices section for admissions updates, document reminders, and school office notices.
+- **Live Notices Ready**: Can read notices from `VITE_NOTICES_API_URL` once a secure admin backend or CMS is connected.
+
+#### 7. **Contact Directory & Community Channels (`ContactSection.tsx`)**
 - **Interactive Contact Cards**:
   - **Physical Address**: *348 Khangela St, Ntuzuma A, 4360* with a one-click copy button.
   - **Telephone**: *081 509 1460* with instant call trigger and copy-to-clipboard functionality.
   - **Official Email**: *PHIKISWAYO-PS@kznschools.gov.za* with mailto trigger and copy button.
 - **Social Media Hub**: Prominent links to connect with the school on **Facebook** and **TikTok**, with WhatsApp ready to be added once the official number or link is supplied.
 
-#### 7. **Footer (`Footer.tsx`)**
+#### 8. **Footer (`Footer.tsx`)**
 - Complete site directory, direct PDF download trigger, physical location details, copyright notices, and a smooth scroll-to-top button.
 
 ---
@@ -93,13 +97,16 @@ This application provides parents, learners, educators, and community members wi
 │   │   ├── AdmissionsSection.tsx# Admission guide & interactive checklist
 │   │   ├── AdmissionFormModal.tsx# Digital preview & print modal for application form
 │   │   ├── EventsSection.tsx    # School calendar & categorized events
+│   │   ├── NewsSection.tsx      # School news and notices
 │   │   ├── ContactSection.tsx   # Contact directory & social media connections
 │   │   ├── Footer.tsx           # Site footer & quick links
 │   │   └── SchoolCrest.tsx      # Reusable official school logo image component
 │   ├── data/
 │   │   └── schoolData.ts        # Centralized school data, contacts & event models
 │   └── utils/
-│       └── admissionForm.ts     # Admission form download/open helpers
+│       ├── admissionForm.ts     # Admission form download/open helpers
+│       ├── assets.ts            # Deployment-safe static asset paths
+│       └── notices.ts           # Optional live notices loader
 ```
 
 ---

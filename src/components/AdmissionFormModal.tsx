@@ -72,7 +72,7 @@ export const AdmissionFormModal: React.FC<AdmissionFormModalProps> = ({ isOpen, 
               id="modal-download-pdf-btn"
             >
               <Download className="w-4 h-4" />
-              <span>{isDownloading ? 'Generating...' : 'Download PDF'}</span>
+              <span>{isDownloading ? 'Preparing...' : 'Download PDF'}</span>
             </button>
 
             <button

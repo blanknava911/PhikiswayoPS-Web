@@ -9,6 +9,7 @@ import {
   Calendar, 
   Send, 
   Home,
+  Newspaper,
   Download
 } from 'lucide-react';
 import { downloadAdmissionForm } from '../utils/admissionForm';
@@ -37,6 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'about' as TabType, label: 'About Us', icon: Info },
     { id: 'admissions' as TabType, label: 'Admissions', icon: GraduationCap },
     { id: 'events' as TabType, label: 'Events', icon: Calendar },
+    { id: 'news' as TabType, label: 'News', icon: Newspaper },
     { id: 'contact' as TabType, label: 'Contact & Socials', icon: Send },
   ];
 
@@ -57,8 +59,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center gap-3 text-left group focus:outline-none cursor-pointer"
           id="nav-brand-logo"
         >
-          <div className="relative p-1 rounded-xl bg-neutral-50 group-hover:bg-red-50 transition-colors border border-neutral-200/80">
-            <SchoolCrest size={40} />
+          <div className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-md bg-white p-1 shadow-sm ring-1 ring-neutral-200 transition-colors group-hover:ring-red-200">
+            <SchoolCrest size={50} />
           </div>
           <div>
             <h1 className="text-lg sm:text-xl font-extrabold text-[#ff2121] tracking-tight font-display leading-tight">

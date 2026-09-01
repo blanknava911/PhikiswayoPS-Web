@@ -7,12 +7,15 @@ import {
   Download
 } from 'lucide-react';
 import { downloadAdmissionForm } from '../utils/admissionForm';
+import { publicAssetPath } from '../utils/assets';
 
 interface HeroSectionProps {
   setActiveTab: (tab: TabType) => void;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ setActiveTab }) => {
+  const heroImage = publicAssetPath('school-hero.jpg');
+
   const handleDownloadPdf = (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
@@ -22,9 +25,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ setActiveTab }) => {
     }
   };
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#990000] via-[#cc1414] to-[#ff2121] text-white pt-16 pb-20 sm:pt-20 sm:pb-28" id="hero-section">
-      {/* Decorative Background Accents */}
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
+    <section className="relative overflow-hidden bg-neutral-950 text-white pt-16 pb-20 sm:pt-20 sm:pb-28" id="hero-section">
+      <img
+        src={heroImage}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30 pointer-events-none" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

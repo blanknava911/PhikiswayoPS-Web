@@ -1,4 +1,5 @@
 import React from 'react';
+import { publicAssetPath } from '../utils/assets';
 
 interface SchoolCrestProps {
   className?: string;
@@ -13,17 +14,20 @@ export const SchoolCrest: React.FC<SchoolCrestProps> = ({
   showText = false,
   variant = 'shield'
 }) => {
+  const logoSize = Math.round(size);
+  const fullLogoHeight = Math.round(size * 1.08);
+
   return (
     <div className={`inline-flex items-center gap-3 ${className}`}>
       <img
-        src="/school-logo.png"
+        src={publicAssetPath('school-logo.png')}
         alt="Phikiswayo Primary School logo"
-        width={variant === 'full' ? size : size}
-        height={variant === 'full' ? Math.round(size * 1.1) : size}
-        className="shrink-0 object-contain drop-shadow-sm"
+        width={logoSize}
+        height={variant === 'full' ? fullLogoHeight : logoSize}
+        className="shrink-0 object-contain"
         style={{
-          width: variant === 'full' ? size : size,
-          height: variant === 'full' ? Math.round(size * 1.1) : size,
+          width: logoSize,
+          height: variant === 'full' ? fullLogoHeight : logoSize,
         }}
       />
 

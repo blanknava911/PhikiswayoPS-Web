@@ -1,4 +1,4 @@
-import { SchoolEvent, StatItem, DocumentRequirement, SchoolValue, FAQItem } from '../types';
+import { SchoolEvent, StatItem, DocumentRequirement, SchoolValue, FAQItem, NoticeItem } from '../types';
 
 export const SCHOOL_INFO = {
   name: "Phikiswayo Primary School",
@@ -269,5 +269,33 @@ export const FREQUENT_QUESTIONS: FAQItem[] = [
     question: "What is the Mission of Phikiswayo Primary School?",
     answer: "Our Mission is: 'We will provide high quality education relevant to all learners which will equip them with knowledge, skills, values and attitude to meet the challenges of the future.'",
     category: "General"
+  }
+];
+
+export const SCHOOL_NOTICES: NoticeItem[] = [
+  {
+    id: "notice-2027-admissions",
+    title: "2027 Admission Applications",
+    date: "September 15, 2026",
+    category: "admissions",
+    summary: "Parents and guardians can download the official admission form and submit completed applications at the school administration office.",
+    audience: "Parents and guardians",
+    pinned: true
+  },
+  {
+    id: "notice-documents",
+    title: "Certified Documents Required",
+    date: "September 15, 2026",
+    category: "general",
+    summary: "Please bring certified copies of parent or guardian ID, learner birth certificate, clinic card, proof of address, latest report, and transfer card where applicable.",
+    audience: "New applicants"
+  },
+  {
+    id: "notice-office-hours",
+    title: "Office Hours for Enquiries",
+    date: "September 1, 2026",
+    category: "general",
+    summary: "The school office is open Monday to Friday from 07:30 to 15:30 during term time for admission and general enquiries.",
+    audience: "School community"
   }
 ];
