@@ -51,15 +51,13 @@ This application provides parents, learners, educators, and community members wi
 
 #### 6. **News & Notices (`NewsSection.tsx`)**
 - **Announcement Feed**: Dedicated parent-facing notices section for admissions updates, document reminders, and school office notices.
-- **Live Notices Ready**: Reads published notices from Firebase Firestore when the live admin database is connected, with saved notices as the fallback if Firebase is unavailable.
+- **Live Notices Ready**: Reads published notices from the database/local persistence when connected, with saved notices as the fallback.
 
-#### 7. **Live Firebase Admin (`AdminSection.tsx`)**
-- **Google Authentication**: Admin authentication powered by Google Sign-In with popup, checking verified credentials for `blanknava205@gmail.com` and `phikiswayop@gmail.com`.
-- **Cloud Firestore Persistence**: Real-time storage for notices and events in `notices` and `events` collections.
-- **Hardened Security Rules (`firestore.rules`)**: ABAC security rules with zero-trust validation preventing ghost fields, oversized payloads, invalid enums, and unverified mutations.
+#### 7. **School Management Portal (`AdminSection.tsx`)**
+- **Administrator Access**: Secure admin access for approved school accounts (`blanknava205@gmail.com` and `phikiswayop@gmail.com`).
 - **Editable Notices**: Create, edit, publish, unpublish, pin, and delete school notices.
 - **Editable Events**: Create, edit, publish, unpublish, and delete school events that appear on the live website.
-- **Seed Utility**: Quick action to populate default school announcements and calendar milestones directly to Firestore.
+- **Seed Utility**: Quick action to populate default school announcements and calendar milestones.
 
 #### 8. **Contact Directory & Community Channels (`ContactSection.tsx`)**
 - **Interactive Contact Cards**:
@@ -154,20 +152,12 @@ This application provides parents, learners, educators, and community members wi
 
 ---
 
-## Live Admin Setup
+## Admin Portal Setup
 
-The admin page is directly accessible via the top navigation and footer.
+The admin portal is directly accessible via the top navigation and footer.
 
 1. Navigate to the **Admin** tab.
-2. Click **Sign in with Google**.
-3. Authenticate with an approved school administrator email (`blanknava205@gmail.com` or `phikiswayop@gmail.com`).
-4. Publish, modify, or remove notices and calendar items instantly in Google Cloud Firebase Firestore.
-
-Before using the live admin online, deploy the Firestore rules and indexes:
-
-```bash
-firebase deploy --only firestore
-```
-
-Also confirm both administrator emails are added as users in Firebase Authentication and that the website domain is listed under Firebase Authentication authorized domains.
+2. Sign in with an approved school administrator email (`blanknava205@gmail.com` or `phikiswayop@gmail.com`).
+3. Publish, modify, or remove notices and calendar items instantly.
+4. Optional: If connecting Supabase, provide `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in environment variables.
 

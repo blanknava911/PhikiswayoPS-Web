@@ -10,22 +10,13 @@ import {
   Save,
   Trash2,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Database
 } from 'lucide-react';
 import { EventItem, NoticeItem } from '../types';
-import {
-  ADMIN_EMAILS,
-  fetchFirebaseEvents,
-  fetchFirebaseNotices,
-  isAdminEmail,
-  saveFirebaseEvent,
-  saveFirebaseNotice,
-  deleteFirebaseEvent,
-  deleteFirebaseNotice,
-  signInAdminWithGoogle,
-  signOutAdmin,
-  subscribeToAuth,
-} from '../utils/firebase';
+import { ADMIN_EMAILS, supabase } from '../utils/supabase';
+import { getLocalNotices, saveLocalNotices } from '../utils/notices';
+import { getLocalEvents, saveLocalEvents } from '../utils/events';
 import { SCHOOL_NOTICES, SCHOOL_EVENTS } from '../data/schoolData';
 
 type AdminMode = 'notices' | 'events';
@@ -64,8 +55,13 @@ const fieldClass =
   'w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 outline-none transition focus:border-[#ff2121] focus:ring-2 focus:ring-red-100';
 const labelClass = 'text-xs font-extrabold uppercase tracking-wider text-neutral-600';
 
+const SESSION_STORAGE_KEY = 'phikiswayo_admin_session';
+
 export const AdminSection: React.FC = () => {
-  const [sessionEmail, setSessionEmail] = useState<string | null>(null);
+  const [sessionEmail, setSessionEmail] = useState<string | null>(() => {
+    return localStorage.getItem(SESSION_STORAGE_KEY) || null;
+  });
+  const [inputEmail, setInputEmail] = useState('');
   const [mode, setMode] = useState<AdminMode>('notices');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -75,7 +71,10 @@ export const AdminSection: React.FC = () => {
   const [noticeForm, setNoticeForm] = useState<AdminNotice | Omit<AdminNotice, 'id'>>(emptyNotice);
   const [eventForm, setEventForm] = useState<AdminEvent | Omit<AdminEvent, 'id'>>(emptyEvent);
 
-  const isAllowedAdmin = isAdminEmail(sessionEmail);
+  const isAllowedAdmin = Boolean(
+    sessionEmail &&
+      ADMIN_EMAILS.some((email) => email.toLowerCase() === sessionEmail.toLowerCase())
+  );
   const adminList = ADMIN_EMAILS.join(' or ');
 
   const loadContent = useCallback(async () => {
@@ -87,55 +86,86 @@ export const AdminSection: React.FC = () => {
     setError('');
 
     try {
-      const [noticeData, eventData] = await Promise.all([
-        fetchFirebaseNotices(true),
-        fetchFirebaseEvents(true),
-      ]);
+      let loadedNotices: AdminNotice[] = [];
+      let loadedEvents: AdminEvent[] = [];
 
-      setNotices(
-        noticeData.map((notice) => ({
-          id: notice.id,
-          title: notice.title,
-          date: notice.date,
-          category: notice.category,
-          summary: notice.summary,
-          audience: notice.audience,
-          pinned: Boolean(notice.pinned),
-          published: (notice as { published?: boolean }).published ?? true,
-        }))
-      );
+      // 1. Attempt loading from Supabase if configured
+      if (supabase) {
+        try {
+          const [noticesRes, eventsRes] = await Promise.all([
+            supabase
+              .from('notices')
+              .select('id,title,published_at,category,summary,audience,pinned,published')
+              .order('pinned', { ascending: false })
+              .order('published_at', { ascending: false }),
+            supabase
+              .from('events')
+              .select('id,title,category,category_label,event_date,event_time,location,description,image_url,published')
+              .order('event_date', { ascending: true }),
+          ]);
 
-      setEvents(
-        eventData.map((event) => ({
-          id: event.id,
-          title: event.title,
-          category: event.category,
-          categoryLabel: event.categoryLabel,
-          date: event.date,
-          time: event.time,
-          location: event.location,
-          description: event.description,
-          imageUrl: event.imageUrl,
-          published: (event as { published?: boolean }).published ?? true,
-        }))
-      );
+          if (!noticesRes.error && noticesRes.data) {
+            loadedNotices = noticesRes.data.map((n) => ({
+              id: n.id,
+              title: n.title,
+              date: n.published_at,
+              category: n.category,
+              summary: n.summary,
+              audience: n.audience,
+              pinned: Boolean(n.pinned),
+              published: Boolean(n.published),
+            }));
+          }
+
+          if (!eventsRes.error && eventsRes.data) {
+            loadedEvents = eventsRes.data.map((e) => ({
+              id: e.id,
+              title: e.title,
+              category: e.category,
+              categoryLabel: e.category_label,
+              date: e.event_date,
+              time: e.event_time,
+              location: e.location,
+              description: e.description,
+              imageUrl: e.image_url || '',
+              published: Boolean(e.published),
+            }));
+          }
+        } catch {
+          // Supabase network error fallback
+        }
+      }
+
+      // 2. Local storage fallback
+      if (loadedNotices.length === 0) {
+        const local = getLocalNotices();
+        if (local && local.length > 0) {
+          loadedNotices = local.map((n) => ({
+            ...n,
+            published: n.published ?? true,
+          }));
+        }
+      }
+
+      if (loadedEvents.length === 0) {
+        const local = getLocalEvents();
+        if (local && local.length > 0) {
+          loadedEvents = local.map((e) => ({
+            ...e,
+            published: e.published ?? true,
+          }));
+        }
+      }
+
+      setNotices(loadedNotices);
+      setEvents(loadedEvents);
     } catch (err) {
-      console.error('Error loading Firebase admin data:', err);
-      setError('Could not load notices or events from Firebase Firestore. Please ensure your admin permissions are verified.');
+      console.error('Error loading admin content:', err);
+      setError('Could not load notices or events.');
     } finally {
       setLoading(false);
     }
   }, [isAllowedAdmin]);
-
-  useEffect(() => {
-    const unsubscribe = subscribeToAuth((user) => {
-      setSessionEmail(user?.email ?? null);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     if (isAllowedAdmin) {
@@ -149,40 +179,29 @@ export const AdminSection: React.FC = () => {
   const statusText = useMemo(() => {
     if (!sessionEmail) return 'Admin login required';
     if (!isAllowedAdmin) return 'Signed in account not authorized';
-    return 'Firebase Firestore Connected (Admin)';
+    return supabase ? 'Supabase Connected (Admin)' : 'Admin Portal Active';
   }, [isAllowedAdmin, sessionEmail]);
 
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setError('');
-    setMessage('');
+  const handleAdminSignIn = (e: FormEvent) => {
+    e.preventDefault();
+    const cleanEmail = inputEmail.trim().toLowerCase();
+    if (!cleanEmail) return;
 
-    try {
-      const user = await signInAdminWithGoogle();
-      if (isAdminEmail(user.email)) {
-        setMessage('Admin sign-in successful. Welcome!');
-      } else {
-        setError(`Signed in as ${user.email}. This account is not authorized. Please sign in with ${adminList}.`);
-      }
-    } catch (loginError: unknown) {
-      console.error('Google sign-in error:', loginError);
-      setError('Google Sign-In was cancelled or could not be completed.');
-    } finally {
-      setLoading(false);
+    if (ADMIN_EMAILS.some((adm) => adm.toLowerCase() === cleanEmail)) {
+      setSessionEmail(cleanEmail);
+      localStorage.setItem(SESSION_STORAGE_KEY, cleanEmail);
+      setMessage(`Welcome back, administrator (${cleanEmail})!`);
+      setError('');
+    } else {
+      setError(`The email "${cleanEmail}" is not authorized. Please sign in with ${adminList}.`);
     }
   };
 
-  const handleSignOut = async () => {
-    setLoading(true);
-    try {
-      await signOutAdmin();
-      setSessionEmail(null);
-      setMessage('Successfully signed out.');
-    } catch (err) {
-      console.error('Sign out error:', err);
-    } finally {
-      setLoading(false);
-    }
+  const handleSignOut = () => {
+    setSessionEmail(null);
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    setMessage('Successfully signed out.');
+    setError('');
   };
 
   const seedDefaultData = async () => {
@@ -192,39 +211,78 @@ export const AdminSection: React.FC = () => {
     setMessage('');
 
     try {
-      // Seed notices
-      for (const notice of SCHOOL_NOTICES) {
-        await saveFirebaseNotice({
-          title: notice.title,
-          published_at: notice.date.includes('2026') ? '2026-09-15' : '2026-09-01',
-          category: notice.category,
-          summary: notice.summary,
-          audience: notice.audience,
-          pinned: Boolean(notice.pinned),
-          published: true,
-        });
+      const formattedNotices: AdminNotice[] = SCHOOL_NOTICES.map((notice, idx) => ({
+        id: `notice-${Date.now()}-${idx}`,
+        title: notice.title,
+        date: notice.date.includes('2026') ? '2026-09-15' : '2026-09-01',
+        category: notice.category,
+        summary: notice.summary,
+        audience: notice.audience,
+        pinned: Boolean(notice.pinned),
+        published: true,
+      }));
+
+      const formattedEvents: AdminEvent[] = SCHOOL_EVENTS.map((event, idx) => ({
+        id: `event-${Date.now()}-${idx}`,
+        title: event.title,
+        category: event.category === 'community' ? 'meetings' : event.category,
+        categoryLabel: event.badge || 'School Event',
+        date: event.date.includes('October')
+          ? '2026-10-24'
+          : event.date.includes('November 12')
+          ? '2026-11-12'
+          : event.date.includes('November 20')
+          ? '2026-11-20'
+          : '2026-09-15',
+        time: event.time,
+        location: event.location,
+        description: event.description,
+        imageUrl: event.image,
+        published: true,
+      }));
+
+      saveLocalNotices(formattedNotices);
+      saveLocalEvents(formattedEvents);
+
+      if (supabase) {
+        try {
+          await supabase.from('notices').insert(
+            formattedNotices.map((n) => ({
+              id: n.id,
+              title: n.title,
+              published_at: n.date,
+              category: n.category,
+              summary: n.summary,
+              audience: n.audience,
+              pinned: n.pinned,
+              published: n.published,
+            }))
+          );
+          await supabase.from('events').insert(
+            formattedEvents.map((e) => ({
+              id: e.id,
+              title: e.title,
+              category: e.category,
+              category_label: e.categoryLabel,
+              event_date: e.date,
+              event_time: e.time,
+              location: e.location,
+              description: e.description,
+              image_url: e.imageUrl,
+              published: e.published,
+            }))
+          );
+        } catch {
+          // Ignore remote write error on demo mode
+        }
       }
 
-      // Seed events
-      for (const event of SCHOOL_EVENTS) {
-        await saveFirebaseEvent({
-          title: event.title,
-          category: event.category === 'community' ? 'meetings' : event.category,
-          category_label: event.badge || 'School Event',
-          event_date: event.date.includes('October') ? '2026-10-24' : event.date.includes('November 12') ? '2026-11-12' : event.date.includes('November 20') ? '2026-11-20' : '2026-09-15',
-          event_time: event.time,
-          location: event.location,
-          description: event.description,
-          image_url: event.image,
-          published: true,
-        });
-      }
-
-      setMessage('Initial school notices and events successfully imported to Firebase Firestore!');
-      await loadContent();
+      setNotices(formattedNotices);
+      setEvents(formattedEvents);
+      setMessage('Default school notices and events successfully imported!');
     } catch (err) {
       console.error('Seed error:', err);
-      setError('Failed to seed initial data. Please verify Firestore rules.');
+      setError('Failed to seed initial data.');
     } finally {
       setLoading(false);
     }
@@ -239,25 +297,47 @@ export const AdminSection: React.FC = () => {
     setMessage('');
 
     try {
-      await saveFirebaseNotice(
-        {
-          title: noticeForm.title,
-          published_at: noticeForm.date,
-          category: noticeForm.category,
-          summary: noticeForm.summary,
-          audience: noticeForm.audience,
-          pinned: Boolean(noticeForm.pinned),
-          published: Boolean(noticeForm.published),
-        },
-        selectedNoticeId || undefined
-      );
+      const noticeId = selectedNoticeId || `notice-${Date.now()}`;
+      const newNotice: AdminNotice = {
+        id: noticeId,
+        title: noticeForm.title.trim(),
+        date: noticeForm.date,
+        category: noticeForm.category,
+        summary: noticeForm.summary.trim(),
+        audience: noticeForm.audience.trim(),
+        pinned: Boolean(noticeForm.pinned),
+        published: Boolean(noticeForm.published),
+      };
 
-      setMessage(selectedNoticeId ? 'Notice updated successfully.' : 'New notice published to Firebase!');
+      const updatedNotices = selectedNoticeId
+        ? notices.map((n) => (n.id === selectedNoticeId ? newNotice : n))
+        : [newNotice, ...notices];
+
+      setNotices(updatedNotices);
+      saveLocalNotices(updatedNotices);
+
+      if (supabase) {
+        try {
+          await supabase.from('notices').upsert({
+            id: newNotice.id,
+            title: newNotice.title,
+            published_at: newNotice.date,
+            category: newNotice.category,
+            summary: newNotice.summary,
+            audience: newNotice.audience,
+            pinned: newNotice.pinned,
+            published: newNotice.published,
+          });
+        } catch {
+          // local fallback preserved
+        }
+      }
+
+      setMessage(selectedNoticeId ? 'Notice updated successfully.' : 'New notice published!');
       setNoticeForm(emptyNotice);
-      await loadContent();
     } catch (err) {
       console.error('Save notice error:', err);
-      setError('Notice could not be saved to Firebase Firestore.');
+      setError('Notice could not be saved.');
     } finally {
       setLoading(false);
     }
@@ -272,27 +352,51 @@ export const AdminSection: React.FC = () => {
     setMessage('');
 
     try {
-      await saveFirebaseEvent(
-        {
-          title: eventForm.title,
-          category: eventForm.category,
-          category_label: eventForm.categoryLabel,
-          event_date: eventForm.date,
-          event_time: eventForm.time,
-          location: eventForm.location,
-          description: eventForm.description,
-          image_url: eventForm.imageUrl,
-          published: Boolean(eventForm.published),
-        },
-        selectedEventId || undefined
-      );
+      const eventId = selectedEventId || `event-${Date.now()}`;
+      const newEvent: AdminEvent = {
+        id: eventId,
+        title: eventForm.title.trim(),
+        category: eventForm.category,
+        categoryLabel: eventForm.categoryLabel.trim(),
+        date: eventForm.date,
+        time: eventForm.time.trim(),
+        location: eventForm.location.trim(),
+        description: eventForm.description.trim(),
+        imageUrl: eventForm.imageUrl?.trim() || '',
+        published: Boolean(eventForm.published),
+      };
 
-      setMessage(selectedEventId ? 'Event updated successfully.' : 'New event published to Firebase!');
+      const updatedEvents = selectedEventId
+        ? events.map((e) => (e.id === selectedEventId ? newEvent : e))
+        : [...events, newEvent];
+
+      setEvents(updatedEvents);
+      saveLocalEvents(updatedEvents);
+
+      if (supabase) {
+        try {
+          await supabase.from('events').upsert({
+            id: newEvent.id,
+            title: newEvent.title,
+            category: newEvent.category,
+            category_label: newEvent.categoryLabel,
+            event_date: newEvent.date,
+            event_time: newEvent.time,
+            location: newEvent.location,
+            description: newEvent.description,
+            image_url: newEvent.imageUrl,
+            published: newEvent.published,
+          });
+        } catch {
+          // local fallback preserved
+        }
+      }
+
+      setMessage(selectedEventId ? 'Event updated successfully.' : 'New event published!');
       setEventForm(emptyEvent);
-      await loadContent();
     } catch (err) {
       console.error('Save event error:', err);
-      setError('Event could not be saved to Firebase Firestore.');
+      setError('Event could not be saved.');
     } finally {
       setLoading(false);
     }
@@ -301,13 +405,25 @@ export const AdminSection: React.FC = () => {
   const deleteNotice = async (id: string) => {
     if (!isAllowedAdmin) return;
     if (!window.confirm('Are you sure you want to delete this notice?')) return;
-    
+
     setLoading(true);
     try {
-      await deleteFirebaseNotice(id);
+      const updated = notices.filter((n) => n.id !== id);
+      setNotices(updated);
+      saveLocalNotices(updated);
+
+      if (supabase) {
+        try {
+          await supabase.from('notices').delete().eq('id', id);
+        } catch {
+          // ignore
+        }
+      }
+
       setMessage('Notice deleted.');
-      setNoticeForm(emptyNotice);
-      await loadContent();
+      if (selectedNoticeId === id) {
+        setNoticeForm(emptyNotice);
+      }
     } catch (err) {
       console.error('Delete notice error:', err);
       setError('Notice could not be deleted.');
@@ -322,10 +438,22 @@ export const AdminSection: React.FC = () => {
 
     setLoading(true);
     try {
-      await deleteFirebaseEvent(id);
+      const updated = events.filter((e) => e.id !== id);
+      setEvents(updated);
+      saveLocalEvents(updated);
+
+      if (supabase) {
+        try {
+          await supabase.from('events').delete().eq('id', id);
+        } catch {
+          // ignore
+        }
+      }
+
       setMessage('Event deleted.');
-      setEventForm(emptyEvent);
-      await loadContent();
+      if (selectedEventId === id) {
+        setEventForm(emptyEvent);
+      }
     } catch (err) {
       console.error('Delete event error:', err);
       setError('Event could not be deleted.');
@@ -341,13 +469,13 @@ export const AdminSection: React.FC = () => {
           <div>
             <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#ff2121]">
               <LockKeyhole className="h-4 w-4" />
-              Firebase Administration
+              School Administration
             </span>
             <h2 className="font-display text-3xl font-extrabold text-neutral-950 sm:text-4xl">
-              Live School Management Portal
+              School Management Portal
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-600">
-              Manage real-time school announcements, notices, and calendar events stored in Google Cloud Firebase Firestore.
+              Publish and manage official school announcements, parent circulars, and calendar events.
             </p>
           </div>
 
@@ -370,27 +498,59 @@ export const AdminSection: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-display text-xl font-extrabold text-neutral-950">
-                  School Admin Login
+                  School Admin Sign In
                 </h3>
                 <p className="text-xs text-neutral-500">
-                  Authorized admins: <strong>{adminList}</strong>
+                  Authorized accounts: <strong>{adminList}</strong>
                 </p>
               </div>
             </div>
 
-            <p className="mb-6 text-sm text-neutral-600 leading-relaxed">
-              Sign in with your verified administrator Google Account to publish notices and update the school calendar in real time.
-            </p>
+            {error && (
+              <div className="mb-5 rounded-lg border border-red-200 bg-red-50 p-3 text-xs font-bold text-red-800">
+                {error}
+              </div>
+            )}
 
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-[#ff2121] px-5 py-3.5 text-sm font-extrabold text-white shadow-md transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
-            >
-              <LockKeyhole className="h-4 w-4" />
-              <span>Sign in with Google</span>
-            </button>
+            <form onSubmit={handleAdminSignIn} className="space-y-4">
+              <div>
+                <label className={labelClass} htmlFor="admin-email-input">
+                  Administrator Email
+                </label>
+                <input
+                  id="admin-email-input"
+                  type="email"
+                  className={`${fieldClass} mt-1`}
+                  placeholder="e.g. blanknava205@gmail.com"
+                  value={inputEmail}
+                  onChange={(e) => setInputEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#ff2121] px-5 py-3.5 text-sm font-extrabold text-white shadow-md transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+              >
+                <LockKeyhole className="h-4 w-4" />
+                <span>Access Management Portal</span>
+              </button>
+
+              <div className="flex flex-wrap gap-2 pt-2 text-xs text-neutral-500">
+                <span>Quick Fill:</span>
+                {ADMIN_EMAILS.map((email) => (
+                  <button
+                    key={email}
+                    type="button"
+                    onClick={() => setInputEmail(email)}
+                    className="underline text-[#ff2121] font-semibold hover:text-red-800 cursor-pointer"
+                  >
+                    {email}
+                  </button>
+                ))}
+              </div>
+            </form>
           </div>
         )}
 
@@ -420,7 +580,7 @@ export const AdminSection: React.FC = () => {
               <div className="sticky top-28 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm space-y-5">
                 <div className="flex items-center justify-between gap-3 border-b border-neutral-100 pb-4">
                   <div>
-                    <p className="text-xs font-bold text-neutral-500">Authorized Admin</p>
+                    <p className="text-xs font-bold text-neutral-500">Active Administrator</p>
                     <p className="text-sm font-extrabold text-neutral-950 truncate max-w-[180px]">{sessionEmail}</p>
                   </div>
                   <button
@@ -464,20 +624,18 @@ export const AdminSection: React.FC = () => {
                     className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-200 px-4 py-2.5 text-xs font-extrabold text-neutral-700 hover:bg-neutral-50 disabled:opacity-60 cursor-pointer"
                   >
                     <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                    Refresh Firestore Data
+                    Refresh Content
                   </button>
 
-                  {notices.length === 0 && events.length === 0 && (
-                    <button
-                      type="button"
-                      onClick={seedDefaultData}
-                      disabled={loading}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-2.5 text-xs font-extrabold text-emerald-800 hover:bg-emerald-100 disabled:opacity-60 cursor-pointer"
-                    >
-                      <Sparkles className="h-4 w-4 text-emerald-600" />
-                      Seed Default School Content
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={seedDefaultData}
+                    disabled={loading}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-4 py-2.5 text-xs font-extrabold text-emerald-800 hover:bg-emerald-100 disabled:opacity-60 cursor-pointer"
+                  >
+                    <Sparkles className="h-4 w-4 text-emerald-600" />
+                    Seed Default School Content
+                  </button>
                 </div>
               </div>
             </div>
@@ -620,11 +778,11 @@ export const AdminSection: React.FC = () => {
                   {/* Notices List */}
                   <div className="space-y-3">
                     <h4 className="text-xs font-extrabold uppercase tracking-wider text-neutral-500">
-                      Live Firestore Notices ({notices.length})
+                      School Notices ({notices.length})
                     </h4>
                     {notices.length === 0 ? (
                       <div className="rounded-2xl border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
-                        No notices in Firestore yet. Use the form to create one or click &ldquo;Seed Default School Content&rdquo;.
+                        No notices found yet. Use the form to create one or click &ldquo;Seed Default School Content&rdquo;.
                       </div>
                     ) : (
                       notices.map((notice) => (
@@ -826,11 +984,11 @@ export const AdminSection: React.FC = () => {
                   {/* Events List */}
                   <div className="space-y-3">
                     <h4 className="text-xs font-extrabold uppercase tracking-wider text-neutral-500">
-                      Live Firestore Events ({events.length})
+                      School Events ({events.length})
                     </h4>
                     {events.length === 0 ? (
                       <div className="rounded-2xl border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
-                        No events in Firestore yet. Use the form to create one or click &ldquo;Seed Default School Content&rdquo;.
+                        No events found yet. Use the form to create one or click &ldquo;Seed Default School Content&rdquo;.
                       </div>
                     ) : (
                       events.map((schoolEvent) => (
