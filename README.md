@@ -13,7 +13,7 @@ This application provides parents, learners, educators, and community members wi
 ### 🌟 Key Modules & Features
 
 #### 1. **Navigation & Header (`Navbar.tsx`)**
-- **Brand Identity**: Features the custom SVG **School Crest** and official school branding.
+- **Brand Identity**: Features the official school logo image in `public/school-logo.png` and official school branding.
 - **Dynamic Navigation**: Smooth-scrolling tab switching between **Home**, **About Us**, **Admissions**, **Events**, and **Contact & Socials**.
 - **Call-to-Action**: Direct header button for immediate PDF application download.
 - **Mobile Drawer**: Fully responsive slide-down menu with accessible touch targets for mobile devices.
@@ -42,8 +42,8 @@ This application provides parents, learners, educators, and community members wi
   2. *Gather Required Documents* (learner birth certificate, clinic card, parent IDs, proof of address, latest report card).
   3. *Submit in Person* at the school administration office.
 - **Interactive Document Checklist**: Dynamic checklist allowing parents to check off required documents with real-time feedback.
-- **Direct PDF Download**: Powered by `jsPDF`, generating a multi-page, formatted official application document ready for printing.
-- **Digital Form Preview Modal**: Full-screen preview modal displaying the printable application layout with quick print and download actions.
+- **Direct PDF Download**: Uses the official uploaded admission form PDF in `public/admission-form.pdf`.
+- **Digital Form Preview Modal**: Full-screen preview modal displaying the official PDF with quick print and download actions.
 
 #### 5. **School Events & Calendar (`EventsSection.tsx`)**
 - **Category Filter Tabs**: Interactive filtering across **All Events**, **Academic**, **Sports & Athletics**, and **Parent Meetings**.
@@ -54,7 +54,7 @@ This application provides parents, learners, educators, and community members wi
   - **Physical Address**: *348 Khangela St, Ntuzuma A, 4360* with a one-click copy button.
   - **Telephone**: *081 509 1460* with instant call trigger and copy-to-clipboard functionality.
   - **Official Email**: *PHIKISWAYO-PS@kznschools.gov.za* with mailto trigger and copy button.
-- **Social Media Hub**: Prominent links to connect with the school on **Facebook**, **WhatsApp Community**, and **YouTube Channel**.
+- **Social Media Hub**: Prominent links to connect with the school on **Facebook** and **TikTok**, with WhatsApp ready to be added once the official number or link is supplied.
 
 #### 7. **Footer (`Footer.tsx`)**
 - Complete site directory, direct PDF download trigger, physical location details, copyright notices, and a smooth scroll-to-top button.
@@ -69,7 +69,7 @@ This application provides parents, learners, educators, and community members wi
 | **Build Tool** | [Vite](https://vitejs.dev/) |
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **Iconography** | [Lucide React](https://lucide.dev/) |
-| **PDF Generation** | [jsPDF](https://github.com/parallax/jsPDF) (Client-side vector document generation) |
+| **Admission Form** | Static official PDF served from `public/admission-form.pdf` |
 | **Typography** | Plus Jakarta Sans (Body & UI) & Playfair Display (Headings & Crest) |
 
 ---
@@ -95,11 +95,11 @@ This application provides parents, learners, educators, and community members wi
 │   │   ├── EventsSection.tsx    # School calendar & categorized events
 │   │   ├── ContactSection.tsx   # Contact directory & social media connections
 │   │   ├── Footer.tsx           # Site footer & quick links
-│   │   └── SchoolCrest.tsx      # Scalable SVG School Crest component
+│   │   └── SchoolCrest.tsx      # Reusable official school logo image component
 │   ├── data/
 │   │   └── schoolData.ts        # Centralized school data, contacts & event models
 │   └── utils/
-│       └── generateAdmissionPdf.ts # Programmatic jsPDF application document builder
+│       └── admissionForm.ts     # Admission form download/open helpers
 ```
 
 ---

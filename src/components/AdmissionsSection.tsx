@@ -6,7 +6,7 @@ import {
   Eye, 
   FileCheck2
 } from 'lucide-react';
-import { generateAdmissionPdf } from '../utils/generateAdmissionPdf';
+import { downloadAdmissionForm } from '../utils/admissionForm';
 import { AdmissionFormModal } from './AdmissionFormModal';
 import { SchoolCrest } from './SchoolCrest';
 
@@ -32,8 +32,7 @@ export const AdmissionsSection: React.FC = () => {
   const handleDirectDownload = () => {
     try {
       setIsDownloading(true);
-      const doc = generateAdmissionPdf();
-      doc.save('Phikiswayo_Primary_School_Application_For_Admission.pdf');
+      downloadAdmissionForm();
     } catch (err) {
       console.error('Error downloading PDF:', err);
     } finally {
@@ -80,7 +79,7 @@ export const AdmissionsSection: React.FC = () => {
               </h3>
 
               <p className="text-neutral-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-                Parents and guardians can download the official 2-page <strong>Application for Admission to School</strong> document. Complete the learner, sibling, medical, and parent details at your convenience, sign the parent declaration, and bring it along with certified copies to our school office.
+                Parents and guardians can download the official <strong>Application for Admission to School</strong> document. Complete the learner, sibling, medical, and parent details at your convenience, sign the parent declaration, and bring it along with certified copies to our school office.
               </p>
 
               {/* Highlights pills */}
@@ -130,7 +129,7 @@ export const AdmissionsSection: React.FC = () => {
                   <div className="text-[10px] font-bold tracking-wider uppercase text-neutral-500">
                     Document Sample
                   </div>
-                  <SchoolCrest size={28} variant="shield" />
+                  <SchoolCrest size={36} variant="shield" />
                 </div>
                 
                 <div className="text-[11px] font-black text-center mb-1 text-neutral-900">

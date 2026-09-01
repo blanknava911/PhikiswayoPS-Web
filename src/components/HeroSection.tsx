@@ -6,7 +6,7 @@ import {
   ArrowRight,
   Download
 } from 'lucide-react';
-import { generateAdmissionPdf } from '../utils/generateAdmissionPdf';
+import { downloadAdmissionForm } from '../utils/admissionForm';
 
 interface HeroSectionProps {
   setActiveTab: (tab: TabType) => void;
@@ -16,8 +16,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ setActiveTab }) => {
   const handleDownloadPdf = (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const doc = generateAdmissionPdf();
-      doc.save('Phikiswayo_Primary_School_Application_For_Admission.pdf');
+      downloadAdmissionForm();
     } catch (err) {
       console.error('Download error:', err);
     }

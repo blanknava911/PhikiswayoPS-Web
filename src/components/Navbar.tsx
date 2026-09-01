@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TabType } from '../types';
 import { SchoolCrest } from './SchoolCrest';
-import { 
+import {
   Menu, 
   X, 
   Info, 
@@ -11,7 +11,7 @@ import {
   Home,
   Download
 } from 'lucide-react';
-import { generateAdmissionPdf } from '../utils/generateAdmissionPdf';
+import { downloadAdmissionForm } from '../utils/admissionForm';
 
 interface NavbarProps {
   activeTab: TabType;
@@ -26,8 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const handleDownloadPdf = () => {
     try {
-      const doc = generateAdmissionPdf();
-      doc.save('Phikiswayo_Primary_School_Application_For_Admission.pdf');
+      downloadAdmissionForm();
     } catch (err) {
       console.error('Download error:', err);
     }

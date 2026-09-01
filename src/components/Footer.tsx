@@ -8,7 +8,7 @@ import {
   ArrowUp, 
   Download
 } from 'lucide-react';
-import { generateAdmissionPdf } from '../utils/generateAdmissionPdf';
+import { downloadAdmissionForm } from '../utils/admissionForm';
 
 interface FooterProps {
   setActiveTab: (tab: TabType) => void;
@@ -82,8 +82,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
               <li>
                 <button
                   onClick={() => {
-                    const doc = generateAdmissionPdf();
-                    doc.save('Phikiswayo_Primary_School_Application_For_Admission.pdf');
+                    downloadAdmissionForm();
                   }}
                   className="text-[#ff4d4d] hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer font-bold"
                   id="footer-nav-download-pdf"

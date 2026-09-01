@@ -27,10 +27,9 @@ export const SCHOOL_INFO = {
     lightBg: "#FDF8F8"
   },
   socials: {
-    facebook: "https://facebook.com",
-    whatsapp: "https://wa.me/27815091460?text=Hello%20Phikiswayo%20Primary%20School,%20I%20would%20like%20to%20inquire%20about%20admissions.",
-    youtube: "https://youtube.com",
-    instagram: "https://instagram.com"
+    facebook: "https://www.facebook.com/people/Phikiswayo-Primary-School/61590967820774/#",
+    whatsapp: "",
+    tiktok: "https://www.tiktok.com/@phikiswayo.primar"
   },
   officeHours: "Monday – Friday: 07:30 – 15:30 (Term Time)",
   schoolHours: "Grade R: 07:45 – 12:30 | Grades 1-2: 07:45 – 13:30 | Grades 3-7: 07:45 – 14:30"
