@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { EventItem } from '../types';
 import { fetchLiveEvents } from '../utils/events';
+import { publicAssetPath } from '../utils/assets';
 
 type EventCategory = 'all' | 'academic' | 'sports' | 'meetings';
 
@@ -83,6 +84,7 @@ export const EventsSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<EventCategory>('all');
   const [events, setEvents] = useState<EventItem[]>(EVENTS_DATA);
   const [liveEventError, setLiveEventError] = useState(false);
+  const defaultEventImage = publicAssetPath('school-hero.jpg');
 
   useEffect(() => {
     let isMounted = true;
@@ -119,7 +121,7 @@ export const EventsSection: React.FC = () => {
               Calendar & Highlights
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#ff2121] font-display">
-              School Events & Activities
+              Upcoming School Events & Activities
             </h2>
             <p className="mt-3 text-neutral-600 text-sm sm:text-base">
               Keep track of academic assessment weeks, sports fixtures, and parent meetings at Phikiswayo Primary.
@@ -189,58 +191,65 @@ export const EventsSection: React.FC = () => {
 
         {/* Events Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="events-grid">
-          {filteredEvents.map((event) => (
-            <article
-              key={event.id}
-              className="bg-neutral-50 border border-neutral-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between group"
-              id={`event-card-${event.id}`}
-            >
-              {/* Event Image */}
-              <div className="relative h-48 overflow-hidden bg-neutral-800">
-                <img
-                  src={event.imageUrl}
-                  alt={event.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
-                
-                {/* Date Badge */}
-                <div className="absolute top-3 left-3 bg-[#ff2121] text-white px-3 py-1 rounded-md text-xs font-extrabold shadow-md flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>{event.date}</span>
-                </div>
+          {filteredEvents.map((event) => {
+            const imageSrc = event.imageUrl?.trim() || defaultEventImage;
 
-                {/* Category Badge */}
-                <div className="absolute top-3 right-3 bg-black/75 backdrop-blur-sm text-white px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
-                  {event.categoryLabel}
-                </div>
-              </div>
-
-              {/* Event Details */}
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-neutral-900 group-hover:text-[#ff2121] transition-colors mb-2">
-                    {event.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed mb-4">
-                    {event.description}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-neutral-200/80 space-y-1 text-xs text-neutral-500">
-                  <div className="flex items-center gap-1.5 text-[#ff2121] font-semibold">
-                    <MapPin className="w-3.5 h-3.5" />
-                    <span>{event.location}</span>
+            return (
+              <article
+                key={event.id}
+                className="bg-neutral-50 border border-neutral-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between group"
+                id={`event-card-${event.id}`}
+              >
+                {/* Event Image */}
+                <div className="relative h-48 overflow-hidden bg-neutral-800">
+                  <img
+                    src={imageSrc}
+                    alt={event.title}
+                    referrerPolicy="no-referrer"
+                    onError={(imageEvent) => {
+                      imageEvent.currentTarget.src = defaultEventImage;
+                    }}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
+                  
+                  {/* Date Badge */}
+                  <div className="absolute top-3 left-3 bg-[#ff2121] text-white px-3 py-1 rounded-md text-xs font-extrabold shadow-md flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{event.date}</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{event.time}</span>
+
+                  {/* Category Badge */}
+                  <div className="absolute top-3 right-3 bg-black/75 backdrop-blur-sm text-white px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                    {event.categoryLabel}
                   </div>
                 </div>
-              </div>
-            </article>
-          ))}
+
+                {/* Event Details */}
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-neutral-900 group-hover:text-[#ff2121] transition-colors mb-2">
+                      {event.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed mb-4">
+                      {event.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-neutral-200/80 space-y-1 text-xs text-neutral-500">
+                    <div className="flex items-center gap-1.5 text-[#ff2121] font-semibold">
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>{event.location}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{event.time}</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
       </div>

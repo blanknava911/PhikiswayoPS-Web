@@ -34,7 +34,7 @@ create table if not exists public.events (
   event_time text not null,
   location text not null,
   description text not null,
-  image_url text not null,
+  image_url text not null default '',
   published boolean not null default true,
   created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),
@@ -49,6 +49,9 @@ on public.notices (published, pinned desc, published_at desc);
 
 create index if not exists events_public_order_idx
 on public.events (published, event_date asc);
+
+alter table public.events
+alter column image_url set default '';
 
 create or replace function public.is_school_admin()
 returns boolean

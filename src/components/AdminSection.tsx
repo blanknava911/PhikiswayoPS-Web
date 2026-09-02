@@ -1,8 +1,9 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertCircle, CalendarPlus, CheckCircle2, LockKeyhole, LogOut, Megaphone, RefreshCw, Save, ShieldCheck, Sparkles, Trash2 } from 'lucide-react';
+import { AlertCircle, CalendarPlus, CheckCircle2, Copy, Database, LockKeyhole, LogOut, Megaphone, RefreshCw, Save, ShieldCheck, Sparkles, Trash2 } from 'lucide-react';
 import { EventItem, NoticeItem } from '../types';
 import { SCHOOL_EVENTS, SCHOOL_NOTICES } from '../data/schoolData';
 import { ADMIN_EMAILS, isAdminEmail, isConfigured, supabase } from '../utils/supabase';
+import schemaSql from '../../supabase/schema.sql?raw';
 
 type AdminMode = 'notices' | 'events';
 type AdminNotice = NoticeItem & { published: boolean };
@@ -32,6 +33,47 @@ const emptyEvent: Omit<AdminEvent, 'id'> = {
 
 const fieldClass = 'w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 outline-none transition focus:border-[#ff2121] focus:ring-2 focus:ring-red-100';
 const labelClass = 'text-xs font-extrabold uppercase tracking-wider text-neutral-600';
+
+const AdminSetupGuide: React.FC = () => {
+  const [copied, setCopied] = useState(false);
+
+  const copySql = async () => {
+    await navigator.clipboard.writeText(schemaSql);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2500);
+  };
+
+  return (
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-950">
+      <div className="mb-4 flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#ff2121] shadow-sm">
+          <Database className="h-5 w-5" />
+        </div>
+        <div>
+          <h3 className="font-display text-xl font-extrabold">Supabase setup still needs to be run once</h3>
+          <p className="mt-1 leading-relaxed">
+            Open your Supabase project, go to SQL Editor, paste the copied setup SQL below, and run it. Do not type <strong>supabase/schema.sql</strong> into the editor.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={copySql}
+        className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-950 px-4 py-2.5 text-xs font-extrabold text-white shadow-sm hover:bg-neutral-800"
+      >
+        <Copy className="h-4 w-4 text-[#ff4d4d]" />
+        {copied ? 'Setup SQL Copied' : 'Copy Supabase Setup SQL'}
+      </button>
+
+      <ol className="mt-4 list-decimal space-y-2 pl-5 text-xs font-semibold leading-relaxed text-amber-900">
+        <li>Paste the copied SQL into Supabase SQL Editor and run it.</li>
+        <li>Go to Authentication, then Users, and create users for {ADMIN_EMAILS.join(' and ')}.</li>
+        <li>Give each user a password, then sign in on this website Admin tab.</li>
+      </ol>
+    </div>
+  );
+};
 
 function mapNotice(notice: Record<string, unknown>): AdminNotice {
   return {
@@ -340,44 +382,50 @@ export const AdminSection: React.FC = () => {
           <div className="max-w-2xl rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">
             <h3 className="mb-2 font-display text-xl font-extrabold">Supabase setup needed</h3>
             <p className="leading-relaxed">
-              Add the Supabase URL and publishable key, run <strong>supabase/schema.sql</strong> in the Supabase SQL editor, then create the approved admin users in Supabase Auth.
+              Add the Supabase URL and publishable key, then use the setup box below to copy and run the database setup in Supabase.
             </p>
+            <div className="mt-5">
+              <AdminSetupGuide />
+            </div>
           </div>
         )}
 
         {configured && !sessionEmail && (
-          <form onSubmit={handleLogin} className="max-w-lg rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-[#ff2121]">
-                <ShieldCheck className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-display text-xl font-extrabold text-neutral-950">School Admin Login</h3>
-                <p className="text-xs text-neutral-500">Approved admins: <strong>{adminList}</strong></p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className={labelClass} htmlFor="admin-email">Admin email</label>
-                <select id="admin-email" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} className={`${fieldClass} mt-1`}>
-                  {ADMIN_EMAILS.map((email) => (
-                    <option key={email} value={email}>{email}</option>
-                  ))}
-                </select>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <form onSubmit={handleLogin} className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-[#ff2121]">
+                  <ShieldCheck className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-extrabold text-neutral-950">School Admin Login</h3>
+                  <p className="text-xs text-neutral-500">Approved admins: <strong>{adminList}</strong></p>
+                </div>
               </div>
 
-              <div>
-                <label className={labelClass} htmlFor="admin-password">Password</label>
-                <input id="admin-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} className={`${fieldClass} mt-1`} autoComplete="current-password" required />
-              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass} htmlFor="admin-email">Admin email</label>
+                  <select id="admin-email" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} className={`${fieldClass} mt-1`}>
+                    {ADMIN_EMAILS.map((email) => (
+                      <option key={email} value={email}>{email}</option>
+                    ))}
+                  </select>
+                </div>
 
-              <button type="submit" disabled={loading} className="inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#ff2121] px-5 py-3.5 text-sm font-extrabold text-white shadow-md transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
-                <LockKeyhole className="h-4 w-4" />
-                <span>Sign In</span>
-              </button>
-            </div>
-          </form>
+                <div>
+                  <label className={labelClass} htmlFor="admin-password">Password</label>
+                  <input id="admin-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} className={`${fieldClass} mt-1`} autoComplete="current-password" required />
+                </div>
+
+                <button type="submit" disabled={loading} className="inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-[#ff2121] px-5 py-3.5 text-sm font-extrabold text-white shadow-md transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
+                  <LockKeyhole className="h-4 w-4" />
+                  <span>Sign In</span>
+                </button>
+              </div>
+            </form>
+            <AdminSetupGuide />
+          </div>
         )}
 
         {configured && sessionEmail && !isAllowedAdmin && (
@@ -572,8 +620,8 @@ export const AdminSection: React.FC = () => {
                         <input id="event-location" className={`${fieldClass} mt-1`} value={eventForm.location} onChange={(event) => setEventForm({ ...eventForm, location: event.target.value })} required maxLength={200} />
                       </div>
                       <div>
-                        <label className={labelClass} htmlFor="event-image">Banner Image URL</label>
-                        <input id="event-image" type="url" className={`${fieldClass} mt-1`} value={eventForm.imageUrl} onChange={(event) => setEventForm({ ...eventForm, imageUrl: event.target.value })} placeholder="https://..." required maxLength={1000} />
+                        <label className={labelClass} htmlFor="event-image">Banner Image URL Optional</label>
+                        <input id="event-image" type="url" className={`${fieldClass} mt-1`} value={eventForm.imageUrl} onChange={(event) => setEventForm({ ...eventForm, imageUrl: event.target.value })} placeholder="Leave blank to use the school photo" maxLength={1000} />
                       </div>
                       <div>
                         <label className={labelClass} htmlFor="event-description">Event Details & Description</label>
