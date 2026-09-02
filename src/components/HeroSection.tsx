@@ -6,7 +6,7 @@ import {
   ArrowRight,
   Download
 } from 'lucide-react';
-import { downloadAdmissionForm } from '../utils/admissionForm';
+import { ADMISSION_FORM_PATH, ADMISSION_FORM_FILENAME } from '../utils/admissionForm';
 import { publicAssetPath } from '../utils/assets';
 
 interface HeroSectionProps {
@@ -16,14 +16,6 @@ interface HeroSectionProps {
 export const HeroSection: React.FC<HeroSectionProps> = ({ setActiveTab }) => {
   const heroImage = publicAssetPath('school-hero.jpg');
 
-  const handleDownloadPdf = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      downloadAdmissionForm();
-    } catch (err) {
-      console.error('Download error:', err);
-    }
-  };
   return (
     <section className="relative overflow-hidden bg-neutral-950 text-white pt-16 pb-20 sm:pt-20 sm:pb-28" id="hero-section">
       <img
@@ -72,14 +64,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ setActiveTab }) => {
                 <span>Admissions Guide</span>
               </button>
 
-              <button
-                onClick={handleDownloadPdf}
-                className="inline-flex items-center gap-2 bg-neutral-900/90 hover:bg-neutral-900 text-white border border-red-300/40 hover:border-white px-6 py-3.5 rounded-xl font-extrabold text-sm sm:text-base shadow-xl transition transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+              <a
+                href={ADMISSION_FORM_PATH}
+                download={ADMISSION_FORM_FILENAME}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-neutral-900/90 hover:bg-neutral-900 text-white border border-red-300/40 hover:border-white px-6 py-3.5 rounded-xl font-extrabold text-sm sm:text-base shadow-xl transition transform hover:-translate-y-0.5 active:scale-95 cursor-pointer no-underline"
                 id="hero-btn-download-pdf"
               >
                 <Download className="w-5 h-5 text-[#ff4d4d]" />
                 <span>Download Form (PDF)</span>
-              </button>
+              </a>
 
               <button
                 onClick={() => setActiveTab('contact')}
@@ -134,14 +129,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ setActiveTab }) => {
               </ul>
 
               <div className="mt-6 pt-5 border-t border-neutral-100 flex items-center justify-between gap-2">
-                <button
-                  onClick={handleDownloadPdf}
-                  className="text-xs font-bold text-neutral-800 hover:text-[#ff2121] flex items-center gap-1.5 cursor-pointer bg-neutral-100 hover:bg-neutral-200 px-3 py-1.5 rounded-lg transition"
+                <a
+                  href={ADMISSION_FORM_PATH}
+                  download={ADMISSION_FORM_FILENAME}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold text-neutral-800 hover:text-[#ff2121] flex items-center gap-1.5 cursor-pointer bg-neutral-100 hover:bg-neutral-200 px-3 py-1.5 rounded-lg transition no-underline"
                   id="hero-card-download-btn"
                 >
                   <Download className="w-3.5 h-3.5 text-[#ff2121]" />
                   <span>Download Form</span>
-                </button>
+                </a>
                 <button
                   onClick={() => setActiveTab('admissions')}
                   className="text-xs font-bold text-[#ff2121] hover:underline flex items-center gap-1 cursor-pointer"

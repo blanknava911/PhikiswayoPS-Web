@@ -25,3 +25,42 @@
   background: #d61818;
 }
 
+/* Print Optimization for Admission Form */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #admission-form-dialog,
+  #admission-form-dialog *,
+  #generated-admission-form-root,
+  #generated-admission-form-root * {
+    visibility: visible;
+  }
+  #admission-modal-backdrop {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  #admission-form-dialog {
+    position: static !important;
+    max-height: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+  .admission-page {
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    padding: 15mm 15mm !important;
+    page-break-after: always;
+    break-after: page;
+  }
+  #modal-download-pdf-btn,
+  #modal-print-btn,
+  #modal-close-btn {
+    display: none !important;
+  }
+}
+
+

@@ -9,7 +9,7 @@ import {
   Download,
   LockKeyhole
 } from 'lucide-react';
-import { downloadAdmissionForm } from '../utils/admissionForm';
+import { ADMISSION_FORM_PATH, ADMISSION_FORM_FILENAME } from '../utils/admissionForm';
 
 interface FooterProps {
   setActiveTab: (tab: TabType) => void;
@@ -81,16 +81,17 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
                 </button>
               </li>
               <li>
-                <button
-                  onClick={() => {
-                    downloadAdmissionForm();
-                  }}
-                  className="text-[#ff4d4d] hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer font-bold"
+                <a
+                  href={ADMISSION_FORM_PATH}
+                  download={ADMISSION_FORM_FILENAME}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#ff4d4d] hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer font-bold no-underline"
                   id="footer-nav-download-pdf"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Admission Form (PDF)</span>
-                </button>
+                </a>
               </li>
               <li>
                 <button

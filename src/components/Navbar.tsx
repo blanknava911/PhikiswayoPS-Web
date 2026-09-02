@@ -8,12 +8,12 @@ import {
   GraduationCap, 
   Calendar, 
   Send, 
-  Home,
-  Newspaper,
+  Home, 
+  Newspaper, 
   Download,
   LockKeyhole
 } from 'lucide-react';
-import { downloadAdmissionForm } from '../utils/admissionForm';
+import { ADMISSION_FORM_PATH, ADMISSION_FORM_FILENAME } from '../utils/admissionForm';
 
 interface NavbarProps {
   activeTab: TabType;
@@ -25,14 +25,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const handleDownloadPdf = () => {
-    try {
-      downloadAdmissionForm();
-    } catch (err) {
-      console.error('Download error:', err);
-    }
-  };
 
   const navItems = [
     { id: 'home' as TabType, label: 'Home', icon: Home },
@@ -100,28 +92,34 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div className="h-5 w-px bg-neutral-300 mx-1"></div>
 
-          {/* Quick PDF Download in Navbar */}
-          <button
-            onClick={handleDownloadPdf}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-extrabold bg-neutral-900 hover:bg-neutral-800 text-white shadow-sm transition cursor-pointer"
+          {/* Direct Native PDF Download in Navbar (never blocked by Chrome) */}
+          <a
+            href={ADMISSION_FORM_PATH}
+            download={ADMISSION_FORM_FILENAME}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-extrabold bg-neutral-900 hover:bg-neutral-800 text-white shadow-sm transition cursor-pointer no-underline"
             id="nav-quick-download-pdf"
             title="Download Official Admission Form (PDF)"
           >
             <Download className="w-3.5 h-3.5 text-[#ff4d4d]" />
             <span>Download Form</span>
-          </button>
+          </a>
         </div>
 
         {/* Mobile Controls */}
         <div className="flex items-center gap-2 lg:hidden">
-          <button
-            onClick={handleDownloadPdf}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#ff2121] text-white shadow-sm transition cursor-pointer"
+          <a
+            href={ADMISSION_FORM_PATH}
+            download={ADMISSION_FORM_FILENAME}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#ff2121] text-white shadow-sm transition cursor-pointer no-underline"
             id="mobile-nav-download-pdf"
           >
             <Download className="w-3.5 h-3.5" />
             <span>PDF</span>
-          </button>
+          </a>
 
           {/* Mobile Hamburger Toggle */}
           <button
@@ -160,16 +158,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
 
           <div className="pt-2">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                handleDownloadPdf();
-              }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-extrabold bg-neutral-900 text-white shadow-md transition cursor-pointer"
+            <a
+              href={ADMISSION_FORM_PATH}
+              download={ADMISSION_FORM_FILENAME}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-extrabold bg-neutral-900 text-white shadow-md transition cursor-pointer no-underline"
             >
               <Download className="w-4 h-4 text-[#ff4d4d]" />
               <span>Download Official Admission Form (PDF)</span>
-            </button>
+            </a>
           </div>
         </div>
       )}
