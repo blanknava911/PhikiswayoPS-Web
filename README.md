@@ -45,30 +45,23 @@ This application provides parents, learners, educators, and community members wi
 - **Direct PDF Download**: Uses the official uploaded admission form PDF in `public/admission-form.pdf`.
 - **Digital Form Preview Modal**: Full-screen image preview generated from the official PDF, with quick open and download actions. This avoids Chrome blocking embedded PDF previews.
 
-#### 5. **School Events & Calendar (`EventsSection.tsx`)**
+#### 5. **Upcoming Events & Calendar (`EventsSection.tsx`)**
+- **Background Updates**: Reads upcoming school events from `public/events.json`, so event updates can be made through GitHub without Supabase or website admin access.
 - **Category Filter Tabs**: Interactive filtering across **All Events**, **Academic**, **Sports & Athletics**, and **Parent Meetings**.
 - **Event Cards**: Rich cards with visual imagery, badge categories, scheduled dates, times, campus locations, and descriptive overviews.
 
 #### 6. **News & Notices (`NewsSection.tsx`)**
 - **Announcement Feed**: Dedicated parent-facing notices section for admissions updates, document reminders, and school office notices.
-- **Live Notices Ready**: Reads published notices from Supabase when the live admin database is connected, with saved notices as the fallback if Supabase is unavailable.
+- **Background Updates**: Reads school notices from `public/notices.json`, so updates can be made through GitHub without a public admin login.
 
-#### 7. **Live Supabase Admin (`AdminSection.tsx`)**
-- **Email Login**: Admin authentication powered by Supabase Auth for `blanknava205@gmail.com` and `phikiswayop@gmail.com`.
-- **Cloud Database Persistence**: Live storage for notices and events in `notices` and `events` tables.
-- **Row-Level Security**: Public visitors can only read published content, while writes are limited to approved admin emails.
-- **Editable Notices**: Create, edit, publish, unpublish, pin, and delete school notices.
-- **Editable Events**: Create, edit, publish, unpublish, and delete school events that appear on the live website.
-- **Seed Utility**: Quick action to populate default school announcements and calendar milestones directly to Supabase.
-
-#### 8. **Contact Directory & Community Channels (`ContactSection.tsx`)**
+#### 7. **Contact Directory & Community Channels (`ContactSection.tsx`)**
 - **Interactive Contact Cards**:
   - **Physical Address**: *348 Khangela St, Ntuzuma A, 4360* with a one-click copy button.
   - **Telephone**: *081 509 1460* with instant call trigger and copy-to-clipboard functionality.
   - **Official Email**: *PHIKISWAYO-PS@kznschools.gov.za* with mailto trigger and copy button.
 - **Social Media Hub**: Prominent links to connect with the school on **Facebook** and **TikTok**, with WhatsApp ready to be added once the official number or link is supplied.
 
-#### 9. **Footer (`Footer.tsx`)**
+#### 8. **Footer (`Footer.tsx`)**
 - Complete site directory, direct PDF download trigger, physical location details, copyright notices, and a smooth scroll-to-top button.
 
 ---
@@ -82,7 +75,7 @@ This application provides parents, learners, educators, and community members wi
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) |
 | **Iconography** | [Lucide React](https://lucide.dev/) |
 | **Admission Form** | Static official PDF served from `public/admission-form.pdf` |
-| **Cloud Database & Auth** | Supabase Auth, Postgres, and row-level security |
+| **Events & Notices Updates** | Static JSON files in `public/events.json` and `public/notices.json` |
 | **Typography** | Plus Jakarta Sans (Body & UI) & Playfair Display (Headings & Crest) |
 
 ---
@@ -106,8 +99,7 @@ This application provides parents, learners, educators, and community members wi
 │   │   ├── AdmissionsSection.tsx# Admission guide & interactive checklist
 │   │   ├── AdmissionFormModal.tsx# Digital preview & print modal for application form
 │   │   ├── EventsSection.tsx    # School calendar & categorized events
-│   │   ├── NewsSection.tsx      # School news and notices
-│   │   ├── AdminSection.tsx     # Supabase-backed login and live content editor
+│   │   ├── NewsSection.tsx      # School news and notices from public/notices.json
 │   │   ├── ContactSection.tsx   # Contact directory & social media connections
 │   │   ├── Footer.tsx           # Site footer & quick links
 │   │   └── SchoolCrest.tsx      # Reusable official school logo image component
@@ -116,11 +108,11 @@ This application provides parents, learners, educators, and community members wi
 │   └── utils/
 │       ├── admissionForm.ts     # Admission form download/open helpers
 │       ├── assets.ts            # Deployment-safe static asset paths
-│       ├── events.ts            # Live events loader
-│       ├── notices.ts           # Live notices loader
-│       └── supabase.ts          # Supabase client and admin email allowlist
-└── supabase/
-    └── schema.sql               # Supabase tables, seed data, and security rules
+│       ├── events.ts            # JSON events loader
+│       └── notices.ts           # JSON notices loader
+└── public/
+    ├── events.json              # Editable upcoming school events
+    └── notices.json             # Editable school news and notices
 ```
 
 ---
@@ -149,16 +141,14 @@ This application provides parents, learners, educators, and community members wi
 
 ---
 
-## Admin Portal Setup
+## Updating Events and Notices
 
-The admin portal is directly accessible via the top navigation and footer.
+The public website no longer uses an admin login or Supabase. To update school content:
 
-1. Open your Supabase project: `https://xykqcgnlyxhxtrlhjesv.supabase.co`.
-2. Open **SQL Editor** and run `supabase/schema.sql`.
-3. Open **Authentication > Users** and create users for `blanknava205@gmail.com` and `phikiswayop@gmail.com`.
-4. Set passwords for those users.
-5. Redeploy the website.
-6. Navigate to the **Admin** tab and sign in with one of the approved emails.
+1. Edit `public/events.json` for upcoming school events.
+2. Edit `public/notices.json` for school news and notices.
+3. Commit and push the changes to GitHub.
+4. Redeploy the website or let the hosting platform redeploy automatically.
 
-The website uses the public Supabase publishable key. Do not commit the database password or service-role key.
+Keep the JSON format valid. If a file is missing or invalid, the website falls back to the built-in saved content.
 

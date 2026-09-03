@@ -1,33 +1,30 @@
 import { EventItem } from '../types';
-import { supabase } from './supabase';
+import { publicAssetPath } from './assets';
 
 export async function fetchLiveEvents(): Promise<EventItem[] | null> {
-  if (!supabase) {
-    return null;
-  }
-
   try {
-    const { data, error } = await supabase
-      .from('events')
-      .select('id,title,category,category_label,event_date,event_time,location,description,image_url')
-      .eq('published', true)
-      .order('event_date', { ascending: true });
-
-    if (error) {
-      throw error;
+    const response = await fetch(publicAssetPath('events.json'), { cache: 'no-store' });
+    if (!response.ok) {
+      return null;
     }
 
-    return data?.map((event) => ({
-      id: event.id,
-      title: event.title,
-      category: event.category,
-      categoryLabel: event.category_label,
-      date: event.event_date,
-      time: event.event_time,
-      location: event.location,
-      description: event.description,
-      imageUrl: event.image_url,
-    })) ?? null;
+    const events = await response.json();
+    if (!Array.isArray(events)) {
+      return null;
+    }
+
+    return events.filter((event): event is EventItem => (
+      event &&
+      typeof event.id === 'string' &&
+      typeof event.title === 'string' &&
+      ['academic', 'sports', 'meetings'].includes(event.category) &&
+      typeof event.categoryLabel === 'string' &&
+      typeof event.date === 'string' &&
+      typeof event.time === 'string' &&
+      typeof event.location === 'string' &&
+      typeof event.description === 'string' &&
+      typeof event.imageUrl === 'string'
+    ));
   } catch {
     return null;
   }
