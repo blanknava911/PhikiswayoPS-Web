@@ -11,6 +11,13 @@ import { publicAssetPath } from '../utils/assets';
 
 type EventCategory = 'all' | 'academic' | 'sports' | 'meetings';
 
+const resolveEventImage = (imageUrl: string, fallback: string) => {
+  const trimmedImageUrl = imageUrl.trim();
+  if (!trimmedImageUrl) return fallback;
+  if (/^https?:\/\//i.test(trimmedImageUrl)) return trimmedImageUrl;
+  return publicAssetPath(trimmedImageUrl);
+};
+
 const EVENTS_DATA: EventItem[] = [
   {
     id: '1',
@@ -192,7 +199,7 @@ export const EventsSection: React.FC = () => {
         {/* Events Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="events-grid">
           {filteredEvents.map((event) => {
-            const imageSrc = event.imageUrl?.trim() || defaultEventImage;
+            const imageSrc = resolveEventImage(event.imageUrl, defaultEventImage);
 
             return (
               <article
