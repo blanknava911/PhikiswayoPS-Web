@@ -1,4 +1,4 @@
-export type TabType = 'home' | 'about' | 'admissions' | 'events' | 'news' | 'contact';
+export type TabType = 'home' | 'about' | 'admissions' | 'events' | 'news' | 'contact' | 'terms' | 'cookies';
 
 export type EventCategory = 'all' | 'academic' | 'sports' | 'community';
 

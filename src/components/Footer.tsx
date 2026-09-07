@@ -119,6 +119,24 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
                   <span>Contact & Socials</span>
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => { setActiveTab('terms'); scrollToTop(); }}
+                  className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+                  id="footer-nav-terms"
+                >
+                  <span>Terms of Service</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => { setActiveTab('cookies'); scrollToTop(); }}
+                  className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+                  id="footer-nav-cookies"
+                >
+                  <span>Cookies & Privacy</span>
+                </button>
+              </li>
             </ul>
           </div>
 

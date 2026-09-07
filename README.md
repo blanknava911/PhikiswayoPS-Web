@@ -59,7 +59,7 @@ This application provides parents, learners, educators, and community members wi
   - **Physical Address**: *348 Khangela St, Ntuzuma A, 4360* with a one-click copy button.
   - **Telephone**: *081 509 1460* with instant call trigger and copy-to-clipboard functionality.
   - **Official Email**: *PHIKISWAYO-PS@kznschools.gov.za* with mailto trigger and copy button.
-- **Social Media Hub**: Prominent links to connect with the school on **Facebook** and **TikTok**, with WhatsApp ready to be added once the official number or link is supplied.
+- **Social Media Hub**: Prominent links to connect with the school on **Facebook** and **TikTok**.
 
 #### 8. **Footer (`Footer.tsx`)**
 - Complete site directory, direct PDF download trigger, physical location details, copyright notices, and a smooth scroll-to-top button.

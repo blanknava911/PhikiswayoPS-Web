@@ -8,6 +8,8 @@ import { EventsSection } from './components/EventsSection';
 import { NewsSection } from './components/NewsSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
+import { CookieNotice } from './components/CookieNotice';
+import { LegalSection } from './components/LegalSection';
 import { publicAssetPath } from './utils/assets';
 
 interface PageHeaderProps {
@@ -123,10 +125,33 @@ export function App() {
             <ContactSection />
           </>
         )}
+
+        {activeTab === 'terms' && (
+          <>
+            <PageHeader
+              eyebrow="Website Terms"
+              title="Terms of Service"
+              description="How visitors may use the public Phikiswayo Primary School website and its information."
+            />
+            <LegalSection mode="terms" />
+          </>
+        )}
+
+        {activeTab === 'cookies' && (
+          <>
+            <PageHeader
+              eyebrow="Privacy & Cookies"
+              title="Cookie and Privacy Notice"
+              description="How this website handles basic browser storage, public information, and privacy."
+            />
+            <LegalSection mode="cookies" />
+          </>
+        )}
       </main>
 
       {/* Footer Section */}
       <Footer setActiveTab={setActiveTab} />
+      <CookieNotice setActiveTab={setActiveTab} />
 
     </div>
   );

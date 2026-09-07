@@ -28,7 +28,6 @@ export const SCHOOL_INFO = {
   },
   socials: {
     facebook: "https://www.facebook.com/people/Phikiswayo-Primary-School/61590967820774/#",
-    whatsapp: "",
     tiktok: "https://www.tiktok.com/@phikiswayo.primar"
   },
   officeHours: "Monday – Friday: 07:30 – 15:30 (Term Time)",
