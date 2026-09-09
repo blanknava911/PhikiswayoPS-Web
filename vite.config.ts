@@ -7,7 +7,10 @@ import {defineConfig} from 'vite';
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(() => {
+  const base = process.env.GITHUB_PAGES === 'true' ? '/PhikiswayoPS-Web/' : '/';
+
   return {
+    base,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
