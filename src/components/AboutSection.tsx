@@ -171,7 +171,7 @@ export const AboutSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Facts Counter Cards: ~900 Learners, Grade R - 7, Established 1984 */}
+        {/* Quick Facts Counter Cards: ~900 Learners, Grade R - 7, Established 1992 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16" id="about-stats-grid">
           
           {/* Card 1: ~900 Learners */}
@@ -206,13 +206,13 @@ export const AboutSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Card 3: Established 1984 */}
+          {/* Card 3: Established 1992 */}
           <div className="bg-neutral-50 border border-neutral-200 rounded-2xl p-8 text-center transition hover:-translate-y-1 hover:border-[#ff2121] shadow-sm" id="stat-established-card">
             <div className="w-14 h-14 mx-auto rounded-full bg-red-100 text-[#ff2121] flex items-center justify-center mb-4">
               <Calendar className="w-7 h-7" />
             </div>
             <div className="text-4xl sm:text-5xl font-extrabold text-[#ff2121] font-serif leading-none mb-2">
-              1984
+              1992
             </div>
             <div className="text-lg font-bold text-neutral-900 mb-1">
               Year Established

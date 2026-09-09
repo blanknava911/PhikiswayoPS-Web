@@ -1,6 +1,6 @@
 # Phikiswayo Primary School Web Portal
 
-Official modern web application for **Phikiswayo Primary School**, a public primary school situated in Ntuzuma A, KwaZulu-Natal, South Africa (Established 1984).
+Official modern web application for **Phikiswayo Primary School**, a public primary school situated in Ntuzuma A, KwaZulu-Natal, South Africa (Established 1992).
 
 > **Motto:** *"Quality Education in the Heart of Ntuzuma — Strive for Success"*
 
@@ -20,14 +20,14 @@ This application provides parents, learners, educators, and community members wi
 
 #### 2. **Hero Section (`HeroSection.tsx`)**
 - **Visual Presentation**: High-contrast, brand-aligned red gradient banner with refined display typography.
-- **Quick Statistics Overview**: Highlights key facts (~900 Active Learners, Grade R – 7, Established 1984).
+- **Quick Statistics Overview**: Highlights key facts (~900 Active Learners, Grade R – 7, Established 1992).
 - **Direct Action Buttons**: Direct navigation to Admissions, School Tour/Contact, and one-click PDF Application Form download.
 - **Quick Info Card**: Quick facts sidebar with grade coverage and admission status.
 
 #### 3. **About & Heritage Showcase (`AboutSection.tsx`)**
 - **Vision Statement**: Dedicated high-contrast card highlighting the school's vision of quality, inclusive foundation education.
 - **Mission Statement**: Structured mission card breaking down academic excellence, character building, cultural enrichment, and community upliftment.
-- **Key Statistics Grid**: Metric cards for **~900 Active Learners**, **Grade R – 7**, and **1984 Year Established**.
+- **Key Statistics Grid**: Metric cards for **~900 Active Learners**, **Grade R – 7**, and **1992 Year Established**.
 - **Community Roots & Narrative**: Historical background on the school's founding in Ntuzuma A and its educational legacy in KwaZulu-Natal.
 - **Core Values**: Four foundational values paired with isiZulu translations:
   - *Resilience (Ukubekezela)*
