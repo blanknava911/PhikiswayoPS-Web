@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blanknava911.github.io/PhikiswayoPS-Web/sitemap.xml
